@@ -15,5 +15,13 @@ police_weapons["Equip"] = {function(player,choice)
 	}, true})
 end}
 
+local emergency_medkit = {}
+emergency_medkit["Take"] = {function(player,choice)
+	local user_id = vRP.getUserId({player}) 
+	vRP.giveInventoryItem({user_id,"medkit",25,true})
+	vRP.giveInventoryItem({user_id,"pills",25,true})
+end}
+
 -- ADD CHOICES
 vRP.addStaticMenuChoices({"police_weapons", police_weapons})
+vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit})
