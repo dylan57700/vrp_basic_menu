@@ -111,6 +111,72 @@ local choice_loot = {function(player,choice)
   end
 end,"Loot nearby corpse"}
 
+-- hack player
+local ch_hack = {function(player,choice)
+  -- get nearest player
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    vRPclient.getNearestPlayer(player,{25},function(nplayer)
+      if nplayer ~= nil then
+        local nuser_id = vRP.getUserId({nplayer})
+        if nuser_id ~= nil then
+          -- prompt number
+		  local nbank = vRP.getBankMoney({nuser_id})
+          local amount = math.floor(nbank*0.01)
+		  if math.random(1,100) == 1 then
+			if vRP.tryBankPayment({nuser_id,amount}) then
+              vRPclient.notify(nplayer,{lang.money.hacked({amount})})
+		      vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
+            else
+              vRPclient.notify(player,{lang.money.not_enough()})
+            end
+		  else
+            vRPclient.notify(nplayer,{lang.money.not_hacked()})
+            vRPclient.notify(player,{lang.money.failed_hack()})
+		  end
+        else
+          vRPclient.notify(player,{lang.common.no_player_near()})
+        end
+      else
+        vRPclient.notify(player,{lang.common.no_player_near()})
+      end
+    end)
+  end
+end,"Hack closest player."}
+
+-- mug player
+local ch_mug = {function(player,choice)
+  -- get nearest player
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    vRPclient.getNearestPlayer(player,{10},function(nplayer)
+      if nplayer ~= nil then
+        local nuser_id = vRP.getUserId({nplayer})
+        if nuser_id ~= nil then
+          -- prompt number
+		  local nmoney = vRP.getMoney({nuser_id})
+          local amount = nmoney
+		  if math.random(1,3) == 1 then
+            if vRP.tryPayment({nuser_id,amount}) then
+              vRPclient.notify(nplayer,{lang.money.mugged({amount})})
+		      vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
+            else
+              vRPclient.notify(player,{lang.money.not_enough()})
+            end
+		  else
+            vRPclient.notify(nplayer,{lang.money.not_mugged()})
+            vRPclient.notify(player,{lang.money.failed_mug()})
+		  end
+        else
+          vRPclient.notify(player,{lang.common.no_player_near()})
+        end
+      else
+        vRPclient.notify(player,{lang.common.no_player_near()})
+      end
+    end)
+  end
+end, "Mug closest player."}
+
 -- ADD STATIC MENU CHOICES
 vRP.addStaticMenuChoices({"police_weapons", police_weapons})
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit})
@@ -127,6 +193,14 @@ vRP.registerMenuBuilder({"main", function(add, data)
 	
     if vRP.hasPermission({user_id,"player.loot"}) then
       choices["Loot"] = choice_loot
+    end
+	
+    if vRP.hasPermission({user_id,"mugger.mug"}) then
+      choices["Mug"] = {ch_mug, "Mug closest player"}
+    end
+	
+    if vRP.hasPermission({user_id,"hacker.hack"}) then
+      choices["Hack"] = {ch_hack, "Hack closest player"}
     end
 	
     add(choices)
