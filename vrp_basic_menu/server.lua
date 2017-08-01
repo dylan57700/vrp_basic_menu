@@ -33,6 +33,10 @@ local ch_blips = {function(player,choice)
   TriggerClientEvent("showBlips", player)
 end, "Toggle blips."}
 
+local ch_sprites = {function(player,choice)
+  TriggerClientEvent("showSprites", player)
+end, "Toggle sprites."}
+
 --client function
 local ch_crun = {function(player,choice)
   vRP.prompt({player,"Function:","",function(player,stringToRun) 
@@ -215,6 +219,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
 	
     if vRP.hasPermission({user_id,"player.blips"}) then
       choices["@Blips"] = ch_blips
+    end
+	
+    if vRP.hasPermission({user_id,"player.sprites"}) then
+      choices["@Sprites"] = ch_sprites
     end
 	
     if vRP.hasPermission({user_id,"admin.crun"}) then

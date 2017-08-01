@@ -1,5 +1,6 @@
 local isRadarExtended = false
 local showblip = false
+local showsprite = false
 
 vRP = Proxy.getInterface("vRP")
 
@@ -7,9 +8,21 @@ RegisterNetEvent('showBlips')
 AddEventHandler('showBlips', function()
 	showblip = not showblip
 	if showblip then
+		showsprite = true
 		vRP.notify({"~g~Blips enabled"})
 	else
+		showsprite = false
 		vRP.notify({"~r~Blips disabled"})
+	end
+end)
+
+RegisterNetEvent('showSprites')
+AddEventHandler('showSprites', function()
+	showsprite = not showsprite
+	if showsprite then
+		vRP.notify({"~g~Sprites enabled"})
+	else
+		vRP.notify({"~r~Sprites disabled"})
 	end
 end)
 
@@ -76,8 +89,7 @@ Citizen.CreateThread(function()
 				headId = Citizen.InvokeNative( 0xBFEFE3321A3F5015, ped, GetPlayerName( id ), false, false, "", false )
 				wantedLvl = GetPlayerWantedLevel( id )
 
-				if showblip then
-					
+				if showsprite then
 					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 0, true ) -- Add player name sprite
 					-- Wanted level display
 					if wantedLvl then
@@ -101,7 +113,12 @@ Citizen.CreateThread(function()
 						Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 9, false ) -- Remove speaking sprite
 	
 					end
-	
+				else
+					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 7, false ) -- Remove wanted sprite
+					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 9, false ) -- Remove speaking sprite
+					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 0, false ) -- Remove player name sprite
+				end
+				if showblip then
 					-- BLIP STUFF --
 	
 					if not DoesBlipExist( blip ) then -- Add blip and create head display on player
@@ -256,9 +273,6 @@ Citizen.CreateThread(function()
 						end
 					end
 				else
-					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 7, false ) -- Remove wanted sprite
-					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 9, false ) -- Remove speaking sprite
-					Citizen.InvokeNative( 0x63BB75ABEDC1F6A0, headId, 0, false ) -- Remove player name sprite
 					RemoveBlip(blip)
 				end
 
