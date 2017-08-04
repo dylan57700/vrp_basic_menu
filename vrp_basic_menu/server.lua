@@ -7,7 +7,6 @@ vRPclient = Tunnel.getInterface("vRP","vRP_static_menus")
 local Lang = module("vrp", "lib/Lang")
 local cfg = module("vrp", "cfg/base")
 local lang = Lang.new(module("vrp", "cfg/lang/"..cfg.lang) or {})
-local mlang = Lang.new(module("vrp_basic_menu", "lang/"..cfg.lang) or {})
 
 -- MAKE CHOICES
 
@@ -74,7 +73,7 @@ local choice_store_money = {function(player, choice)
       vRP.giveInventoryItem({user_id, "money", amount, true})
     end
   end
-end, mlang.police.menu.store_money.description()}
+end, "Store your money in your inventory."}
 
 --medkit storage
 local emergency_medkit = {}
@@ -130,14 +129,14 @@ local ch_hack = {function(player,choice)
           local amount = math.floor(nbank*0.01)
 		  if math.random(1,100) == 1 then
 			if vRP.tryBankPayment({nuser_id,amount}) then
-              vRPclient.notify(nplayer,{mlang.money.hacked({amount})})
+              vRPclient.notify(nplayer,{"Hacked ~r~".. amount .."$."})
 		      vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
             else
               vRPclient.notify(player,{lang.money.not_enough()})
             end
 		  else
-            vRPclient.notify(nplayer,{mlang.money.not_hacked()})
-            vRPclient.notify(player,{mlang.money.failed_hack()})
+            vRPclient.notify(nplayer,{"~g~Hacking attempt failed."})
+            vRPclient.notify(player,{"~r~Hacking attempt failed."})
 		  end
         else
           vRPclient.notify(player,{lang.common.no_player_near()})
@@ -163,14 +162,14 @@ local ch_mug = {function(player,choice)
           local amount = nmoney
 		  if math.random(1,3) == 1 then
             if vRP.tryPayment({nuser_id,amount}) then
-              vRPclient.notify(nplayer,{mlang.money.mugged({amount})})
+              vRPclient.notify(nplayer,{"Mugged ~r~"..amount.."$."})
 		      vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
             else
               vRPclient.notify(player,{lang.money.not_enough()})
             end
 		  else
-            vRPclient.notify(nplayer,{mlang.money.not_mugged()})
-            vRPclient.notify(player,{mlang.money.failed_mug()})
+            vRPclient.notify(nplayer,{"~g~Mugging attempt failed."})
+            vRPclient.notify(player,{"~r~Mugging attempt failed."})
 		  end
         else
           vRPclient.notify(player,{lang.common.no_player_near()})
