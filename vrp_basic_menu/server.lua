@@ -87,7 +87,7 @@ end}
 local emergency_heal = {}
 emergency_heal["Heal"] = {function(player,choice)
 	local user_id = vRP.getUserId({player}) 
-	vRP.setHealth({user_id,100})
+	vRPclient.setHealth(player,{user_id,100})
 end}
 
 --loot corpse
