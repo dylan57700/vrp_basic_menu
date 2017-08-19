@@ -83,6 +83,13 @@ emergency_medkit["Take"] = {function(player,choice)
 	vRP.giveInventoryItem({user_id,"pills",25,true})
 end}
 
+--heal me
+local emergency_heal = {}
+emergency_heal["Heal"] = {function(player,choice)
+	local user_id = vRP.getUserId({player}) 
+	vRP.setHealth({user_id,100})
+end}
+
 --loot corpse
 local choice_loot = {function(player,choice)
   local user_id = vRP.getUserId({player})
@@ -184,6 +191,7 @@ end, "Mug closest player."}
 -- ADD STATIC MENU CHOICES
 vRP.addStaticMenuChoices({"police_weapons", police_weapons})
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit})
+vRP.addStaticMenuChoices({"emergency_heal", emergency_heal})
 
 -- REGISTER MAIN MENU CHOICES
 vRP.registerMenuBuilder({"main", function(add, data)
