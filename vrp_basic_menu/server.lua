@@ -87,7 +87,7 @@ end}
 local emergency_heal = {}
 emergency_heal["Heal"] = {function(player,choice)
 	local user_id = vRP.getUserId({player}) 
-	vRPclient.setHealth(player,{user_id,100})
+	vRPclient.setHealth(player,{user_id,1000})
 end}
 
 --loot corpse
@@ -188,31 +188,31 @@ local ch_mug = {function(player,choice)
   end
 end, "Mug closest player."}
 
--- ADD STATIC MENU CHOICES
-vRP.addStaticMenuChoices({"police_weapons", police_weapons})
-vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit})
-vRP.addStaticMenuChoices({"emergency_heal", emergency_heal})
+-- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
+vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
+vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
+vRP.addStaticMenuChoices({"emergency_heal", emergency_heal}) -- heal button
 
--- REGISTER MAIN MENU CHOICES
+-- REGISTER MAIN MENU CHOICES // REMEMBER TO ADD THE PERMISSIONS FOR WHAT YOU WANT TO USE
 vRP.registerMenuBuilder({"main", function(add, data)
   local user_id = vRP.getUserId({data.player})
   if user_id ~= nil then
     local choices = {}
 	
     if vRP.hasPermission({user_id,"toggle.service"}) then
-      choices["Service"] = choice_service
+      choices["Service"] = choice_service -- toggle the receiving of missions
     end
 	
     if vRP.hasPermission({user_id,"player.loot"}) then
-      choices["Loot"] = choice_loot
+      choices["Loot"] = choice_loot -- take the items of nearest player in coma
     end
 	
     if vRP.hasPermission({user_id,"mugger.mug"}) then
-      choices["Mug"] = {ch_mug, "Mug closest player"}
+      choices["Mug"] = ch_mug -- steal nearest player wallet
     end
 	
     if vRP.hasPermission({user_id,"hacker.hack"}) then
-      choices["Hack"] = {ch_hack, "Hack closest player"}
+      choices["Hack"] = ch_hack --  1 in 100 chance of stealing 1% of nearest player bank
     end
 	
     add(choices)
@@ -226,19 +226,19 @@ vRP.registerMenuBuilder({"admin", function(add, data)
     local choices = {}
 	
     if vRP.hasPermission({user_id,"player.blips"}) then
-      choices["@Blips"] = ch_blips
+      choices["@Blips"] = ch_blips -- turn on map blips and sprites
     end
 	
     if vRP.hasPermission({user_id,"player.sprites"}) then
-      choices["@Sprites"] = ch_sprites
+      choices["@Sprites"] = ch_sprites -- turn on only name sprites
     end
 	
     if vRP.hasPermission({user_id,"admin.crun"}) then
-      choices["@Crun"] = ch_crun
+      choices["@Crun"] = ch_crun -- run any client command, any GTA V client native http://www.dev-c.com/nativedb/
     end
 	
     if vRP.hasPermission({user_id,"admin.srun"}) then
-      choices["@Srun"] = ch_srun
+      choices["@Srun"] = ch_srun -- run any server command, any GTA V server native http://www.dev-c.com/nativedb/
     end
 	
     add(choices)
@@ -251,7 +251,7 @@ vRP.registerMenuBuilder({"police", function(add, data)
   if user_id ~= nil then
     local choices = {}
     if vRP.hasPermission({user_id,"police.store_money"}) then
-      choices["Store money"] = choice_store_money
+      choices["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
     end
     add(choices)
   end
