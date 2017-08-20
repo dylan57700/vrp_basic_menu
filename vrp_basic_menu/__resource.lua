@@ -7,6 +7,7 @@ dependency "vrp"
 client_scripts{ 
   "playerblips/Proxy.lua",
   "playerblips/client.lua",
+  "drag/client.lua",
   "runcode/client.lua"
 }
 

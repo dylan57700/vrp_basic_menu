@@ -188,6 +188,30 @@ local ch_mug = {function(player,choice)
   end
 end, "Mug closest player."}
 
+-- drag player
+local ch_drag = {function(player,choice)
+  -- get nearest player
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    vRPclient.getNearestPlayer(player,{10},function(nplayer)
+      if nplayer ~= nil then
+        local nuser_id = vRP.getUserId({nplayer})
+        if nuser_id ~= nil then
+			if vRPclient.isHandcuffed(nplayer,{}) then
+				TriggerClientEvent("dr:drag", nplayer, player)
+			else
+				vRPclient.notify(player,{"Player is not handcuffed."})
+			end
+        else
+          vRPclient.notify(player,{lang.common.no_player_near()})
+        end
+      else
+        vRPclient.notify(player,{lang.common.no_player_near()})
+      end
+    end)
+  end
+end, "Drag closest player."}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -252,6 +276,9 @@ vRP.registerMenuBuilder({"police", function(add, data)
     local choices = {}
     if vRP.hasPermission({user_id,"police.store_money"}) then
       choices["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
+    end
+    if vRP.hasPermission({user_id,"police.drag"}) then
+      choices["Drag"] = ch_drag -- [TESTING] Should toggle drag of closest player
     end
     add(choices)
   end
