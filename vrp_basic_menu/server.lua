@@ -217,11 +217,29 @@ vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
 vRP.addStaticMenuChoices({"emergency_heal", emergency_heal}) -- heal button
 
--- REGISTER MAIN MENU CHOICES // REMEMBER TO ADD THE PERMISSIONS FOR WHAT YOU WANT TO USE
+-- REMEMBER TO ADD THE PERMISSIONS FOR WHAT YOU WANT TO USE
+-- CREATES PLAYER SUBMENU AND ADD CHOICES
+local ch_player_menu = {function(player,choice)
+	local menu = {}
+	menu.name = "Player"
+	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
+	
+    if vRP.hasPermission({user_id,"player.store_money"}) then
+      menu["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
+    end
+	
+	vRP.openMenu({player, menu})
+end}
+
+-- REGISTER MAIN MENU CHOICES
 vRP.registerMenuBuilder({"main", function(add, data)
   local user_id = vRP.getUserId({data.player})
   if user_id ~= nil then
     local choices = {}
+	
+    if vRP.hasPermission({user_id,"player.player_menu"}) then
+      choices["Player"] = ch_player_menu -- opens player submenu
+    end
 	
     if vRP.hasPermission({user_id,"toggle.service"}) then
       choices["Service"] = choice_service -- toggle the receiving of missions
