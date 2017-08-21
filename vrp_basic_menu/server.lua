@@ -212,6 +212,62 @@ local ch_drag = {function(player,choice)
   end
 end, "Drag closest player."}
 
+-- player check
+local choice_player_check = {function(player,choice)
+  vRPclient.getNearestPlayer(player,{5},function(nplayer)
+    local nuser_id = vRP.getUserId({nplayer})
+    if nuser_id ~= nil then
+      vRPclient.notify(nplayer,{lang.police.menu.check.checked()})
+      vRPclient.getWeapons(nplayer,{},function(weapons)
+        -- prepare display data (money, items, weapons)
+        local money = vRP.getMoney({nuser_id})
+        local items = ""
+        local data = vRP.getUserDataTable({nuser_id})
+        if data and data.inventory then
+          for k,v in pairs(data.inventory) do
+            local item = vRP.items[k]
+            if item then
+              items = items.."<br />"..item.name.." ("..v.amount..")"
+            end
+          end
+        end
+
+        local weapons_info = ""
+        for k,v in pairs(weapons) do
+          weapons_info = weapons_info.."<br />"..k.." ("..v.ammo..")"
+        end
+
+        vRPclient.setDiv(player,{"police_check",".div_police_check{ background-color: rgba(0,0,0,0.75); color: white; font-weight: bold; width: 500px; padding: 10px; margin: auto; margin-top: 150px; }",lang.police.menu.check.info({money,items,weapons_info})})
+        -- request to hide div
+        vRP.request({player, lang.police.menu.check.request_hide(), 1000, function(player,ok)
+          vRPclient.removeDiv(player,{"police_check"})
+        end})
+      end)
+    else
+      vRPclient.notify(player,{lang.common.no_player_near()})
+    end
+  end)
+end, lang.police.menu.check.description()}
+
+-- player store weapons
+local choice_store_weapons = {function(player, choice)
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    vRPclient.getWeapons(player,{},function(weapons)
+      for k,v in pairs(weapons) do
+        -- convert weapons to parametric weapon items
+        vRP.giveInventoryItem({user_id, "wbody|"..k, 1, true})
+        if v.ammo > 0 then
+          vRP.giveInventoryItem({user_id, "wammo|"..k, v.ammo, true})
+        end
+      end
+
+      -- clear all weapons
+      vRPclient.giveWeapons(player,{{},true})
+    end)
+  end
+end, lang.police.menu.store_weapons.description()}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -220,12 +276,21 @@ vRP.addStaticMenuChoices({"emergency_heal", emergency_heal}) -- heal button
 -- REMEMBER TO ADD THE PERMISSIONS FOR WHAT YOU WANT TO USE
 -- CREATES PLAYER SUBMENU AND ADD CHOICES
 local ch_player_menu = {function(player,choice)
+	local user_id = vRP.getUserId({player})
 	local menu = {}
 	menu.name = "Player"
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
 	
     if vRP.hasPermission({user_id,"player.store_money"}) then
       menu["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
+    end
+	
+    if vRP.hasPermission({user_id,"player.store_weapons"}) then
+      menu["Store weapons"] = choice_store_weapons -- store player weapons, like police store weapons from vrp
+    end
+	
+    if vRP.hasPermission({user_id,"player.check"}) then
+      menu["Inspect"] = choice_player_check -- checks nearest player inventory, like police check from vrp
     end
 	
 	vRP.openMenu({player, menu})
