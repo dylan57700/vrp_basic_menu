@@ -197,11 +197,13 @@ local ch_drag = {function(player,choice)
       if nplayer ~= nil then
         local nuser_id = vRP.getUserId({nplayer})
         if nuser_id ~= nil then
-			if vRPclient.isHandcuffed(nplayer,{}) then
+		  vRPclient.isHandcuffed(nplayer,{},function(handcuffed)
+			if handcuffed then
 				TriggerClientEvent("dr:drag", nplayer, player)
 			else
 				vRPclient.notify(player,{"Player is not handcuffed."})
 			end
+		  end)
         else
           vRPclient.notify(player,{lang.common.no_player_near()})
         end
