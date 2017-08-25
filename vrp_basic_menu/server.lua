@@ -363,7 +363,7 @@ vRP.registerMenuBuilder({"police", function(add, data)
       choices["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
     end
     if vRP.hasPermission({user_id,"police.drag"}) then
-      choices["Drag"] = ch_drag -- [TESTING] Should toggle drag of closest player
+      choices["Drag"] = ch_drag -- [TESTING] Should toggle drag of closest player (DO NOT USE)
     end
     add(choices)
   end
