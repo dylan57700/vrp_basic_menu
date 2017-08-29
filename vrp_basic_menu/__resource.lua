@@ -8,8 +8,9 @@ client_scripts{
   "client/Tunnel.lua",
   "client/Proxy.lua",
   "playerblips/client.lua",
-  "drag/client.lua",
   "runcode/client.lua"
+  "drag/client.lua",
+  "client.lua"
 }
 
 server_scripts{ 
