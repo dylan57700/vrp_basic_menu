@@ -57,13 +57,13 @@ end, "Run server function."}
 --police weapons // comment out the weapons if you dont want to give weapons.
 local police_weapons = {}
 police_weapons["Equip"] = {function(player,choice)
-	BMclient.setArmour(player,{100,true})
     vRPclient.giveWeapons(player,{{
 	  ["WEAPON_COMBATPISTOL"] = {ammo=200},
 	  ["WEAPON_PUMPSHOTGUN"] = {ammo=200},
 	  ["WEAPON_NIGHTSTICK"] = {ammo=200},
 	  ["WEAPON_STUNGUN"] = {ammo=200}
 	}, true})
+	BMclient.setArmour(player,{100,true})
 end}
 
 --store money
