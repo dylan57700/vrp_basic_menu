@@ -1,5 +1,5 @@
 
-description "vRP static menus"
+description "vrp_basic_menu"
 --ui_page "ui/index.html"
 
 dependency "vrp"
@@ -8,7 +8,7 @@ client_scripts{
   "client/Tunnel.lua",
   "client/Proxy.lua",
   "playerblips/client.lua",
-  "runcode/client.lua"
+  "runcode/client.lua",
   "drag/client.lua",
   "client.lua"
 }
