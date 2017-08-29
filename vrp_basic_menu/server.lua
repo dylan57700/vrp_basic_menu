@@ -54,7 +54,7 @@ local ch_srun = {function(player,choice)
   end})
 end, "Run server function."}
 
---police weapons
+--police weapons // comment out the weapons if you dont want to give weapons.
 local police_weapons = {}
 police_weapons["Equip"] = {function(player,choice)
 	BMclient.setArmour(100,true)
