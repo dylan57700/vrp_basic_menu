@@ -2,7 +2,8 @@ local Tunnel = module("vrp", "lib/Tunnel")
 local Proxy = module("vrp", "lib/Proxy")
 
 vRP = Proxy.getInterface("vRP")
-vRPclient = Tunnel.getInterface("vRP","vRP_static_menus")
+vRPclient = Tunnel.getInterface("vRP","vRP_basic_menu")
+BMclient = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
 
 local Lang = module("vrp", "lib/Lang")
 local cfg = module("vrp", "cfg/base")
@@ -56,6 +57,7 @@ end, "Run server function."}
 --police weapons
 local police_weapons = {}
 police_weapons["Equip"] = {function(player,choice)
+	BMclient.setArmour(100,true)
     vRPclient.giveWeapons(player,{{
 	  ["WEAPON_COMBATPISTOL"] = {ammo=200},
 	  ["WEAPON_PUMPSHOTGUN"] = {ammo=200},

@@ -5,7 +5,8 @@ description "vRP static menus"
 dependency "vrp"
 
 client_scripts{ 
-  "playerblips/Proxy.lua",
+  "client/Tunnel.lua",
+  "client/Proxy.lua",
   "playerblips/client.lua",
   "drag/client.lua",
   "runcode/client.lua"
