@@ -9,6 +9,7 @@ client_scripts{
   "client/Proxy.lua",
   "playerblips/client.lua",
   "runcode/client.lua",
+  "tptowaypoint/client.lua",
   "drag/client.lua",
   "client.lua"
 }
