@@ -29,6 +29,11 @@ local choice_service = {function(player,choice)
   end
 end, "Go on/off service"}
 
+-- teleport waypoint
+local choice_tptowaypoint = {function(player,choice)
+  TriggerClientEvent("TpToWaypoint", player)
+end, "Teleport to map blip."}
+
 --toggle blips
 local ch_blips = {function(player,choice)
   TriggerClientEvent("showBlips", player)
@@ -351,6 +356,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
     if vRP.hasPermission({user_id,"admin.srun"}) then
       choices["@Srun"] = ch_srun -- run any server command, any GTA V server native http://www.dev-c.com/nativedb/
     end
+
+	if vRP.hasPermission({user_id,"player.tptowaypoint"}) then
+      choices["@TpToWaypoint"] = choice_tptowaypoint -- teleport user to map blip
+	end
 	
     add(choices)
   end
