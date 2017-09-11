@@ -141,13 +141,11 @@ local ch_hack = {function(player,choice)
           -- prompt number
 		  local nbank = vRP.getBankMoney({nuser_id})
           local amount = math.floor(nbank*0.01)
+		  local nvalue = nbank - amount
 		  if math.random(1,100) == 1 then
-			if vRP.tryBankPayment({nuser_id,amount}) then
-              vRPclient.notify(nplayer,{"Hacked ~r~".. amount .."$."})
-		      vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
-            else
-              vRPclient.notify(player,{lang.money.not_enough()})
-            end
+			vRP.setBankMoney({nuser_id,nvalue})
+            vRPclient.notify(nplayer,{"Hacked ~r~".. amount .."$."})
+		    vRP.giveInventoryItem({user_id,"dirty_money",amount,true})
 		  else
             vRPclient.notify(nplayer,{"~g~Hacking attempt failed."})
             vRPclient.notify(player,{"~r~Hacking attempt failed."})
