@@ -467,12 +467,12 @@ vRP.registerMenuBuilder({"police", function(add, data)
       choices["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
     end
 	
-	if vRP.hasPermission({user_id,"police.jail"}) then
-      choices["Easy Jail"] = ch_jail -- [TESTING] Send a nearby handcuffed player to jail (REPORT ISSUES)
+	if vRP.hasPermission({user_id,"police.easy_jail"}) then
+      choices["Easy Jail"] = ch_jail -- Send a nearby handcuffed player to jail with prompt for choice and user_list
     end
 	
     if vRP.hasPermission({user_id,"police.drag"}) then
-      choices["Drag"] = ch_drag -- Drags closest player
+      choices["Drag"] = ch_drag -- Drags closest handcuffed player
     end
 	
     add(choices)
