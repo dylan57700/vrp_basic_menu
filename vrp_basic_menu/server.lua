@@ -4,6 +4,7 @@ local Proxy = module("vrp", "lib/Proxy")
 vRP = Proxy.getInterface("vRP")
 vRPclient = Tunnel.getInterface("vRP","vRP_basic_menu")
 BMclient = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
+vRPbsC = Tunnel.getInterface("vRP_barbershop","vRP_basic_menu")
 
 local Lang = module("vrp", "lib/Lang")
 local cfg = module("vrp", "cfg/base")
@@ -33,6 +34,18 @@ end, "Go on/off service"}
 local choice_tptowaypoint = {function(player,choice)
   TriggerClientEvent("TpToWaypoint", player)
 end, "Teleport to map blip."}
+
+-- fix barbershop green hair for now
+local ch_fixhair = {function(player,choice)
+    local custom = {}
+    local user_id = vRP.getUserId({player})
+    vRP.getUData({user_id,"vRP:head:overlay",function(value)
+	  if value ~= nil then
+	    custom = json.decode(value)
+        vRPbsC.setOverlay(player,{custom,true})
+	  end
+	end})
+end, "Fix the barbershop bug for now."}
 
 --toggle blips
 local ch_blips = {function(player,choice)
@@ -275,6 +288,83 @@ local choice_store_weapons = {function(player, choice)
   end
 end, lang.police.menu.store_weapons.description()}
 
+-- dynamic jail
+local ch_jail = {function(player,choice) 
+  vRPclient.getNearestPlayers(player,{15},function(nplayers) 
+	local user_list = ""
+    for k,v in pairs(nplayers) do
+	  if v<15 then
+		  user_list = user_list .. "[" .. vRP.getUserId({k}) .. "]" .. GetPlayerName(k) .. " | "
+	  end
+    end 
+	if user_list ~= "" then
+	  vRP.prompt({player,"Players Nearby:" .. user_list,"",function(player,target_id) 
+	    if target_id ~= nil and target_id ~= "" then 
+	      vRP.prompt({player,"Jail Time in minutes:","1",function(player,jail_time)
+	        local target = vRP.getUserSource({tonumber(target_id)})
+		  
+		    if tonumber(jail_time) > 30 then
+  			  jail_time = 30
+		    end
+		    if tonumber(jail_time) < 1 then
+		      jail_time = 1
+		    end
+		  
+            vRPclient.isHandcuffed(target,{}, function(handcuffed)  
+              if handcuffed then 
+				vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
+				vRPclient.notify(target,{"~r~You have been sent to jail."})
+				vRPclient.notify(player,{"~b~You sent a player to jail."})
+				vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(tonumber(jail_time)*60*1000)})
+				SetTimeout(tonumber(jail_time)*60*1000, function()
+				  vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
+				  vRPclient.setHandcuffed(target,{false})
+                  vRPclient.notify(target,{"~b~You have been set free."})
+				  vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(-1)})
+				end) 
+			  else
+				vRPclient.notify(player,{"~r~That player is not handcuffed."})
+			  end
+			end)
+	      end})
+        else
+          vRPclient.notify(player,{"~r~No player ID selected."})
+        end 
+	  end})
+    else
+      vRPclient.notify(player,{"~r~No player nearby."})
+    end 
+  end)
+end,"Send a nearby player to jail."}
+
+-- (server) called when a logged player spawn to check for vRP:jail in user_data
+AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn) 
+  local player = vRP.getUserSource({user_id})
+  if first_spawn then
+    SetTimeout(35000,function()
+      local custom = {}
+      vRP.getUData({user_id,"vRP:jail:time",function(value)
+	    if value ~= nil then
+	      custom = json.decode(value)
+		  if custom ~= nil then
+		    if tonumber(custom) > 0 then
+              vRPclient.setHandcuffed(player,{true})
+              vRPclient.teleport(player,{1641.5477294922,2570.4819335938,45.564788818359})
+              vRPclient.notify(player,{"~r~Finish your sentence."})
+              SetTimeout(tonumber(custom)*60*1000, function()
+                vRPclient.teleport(player,{425.7607421875,-978.73425292969,30.709615707397})
+                vRPclient.setHandcuffed(player,{false})
+                vRPclient.notify(player,{"~b~You have been set free."})
+			    vRP.setUData({user_id,"vRP:jail:time",json.encode(-1)})
+              end) 
+		    end
+		  end
+	    end
+	  end})
+    end)
+  end
+end)
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -290,6 +380,10 @@ local ch_player_menu = {function(player,choice)
 	
     if vRP.hasPermission({user_id,"player.store_money"}) then
       menu["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
+    end
+	
+    if vRP.hasPermission({user_id,"player.fix_haircut"}) then
+      menu["Fix Haircut"] = ch_fixhair -- just a work around for barbershop green hair bug while I am busy
     end
 	
     if vRP.hasPermission({user_id,"player.store_weapons"}) then
@@ -368,12 +462,19 @@ vRP.registerMenuBuilder({"police", function(add, data)
   local user_id = vRP.getUserId({data.player})
   if user_id ~= nil then
     local choices = {}
+	
     if vRP.hasPermission({user_id,"police.store_money"}) then
       choices["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
     end
-    if vRP.hasPermission({user_id,"police.drag"}) then
-      choices["Drag"] = ch_drag -- [TESTING] Should toggle drag of closest player (REPORT ISSUES)
+	
+	if vRP.hasPermission({user_id,"police.jail"}) then
+      choices["Easy Jail"] = ch_jail -- [TESTING] Send a nearby handcuffed player to jail (REPORT ISSUES)
     end
+	
+    if vRP.hasPermission({user_id,"police.drag"}) then
+      choices["Drag"] = ch_drag -- Drags closest player
+    end
+	
     add(choices)
   end
 end})
