@@ -289,12 +289,12 @@ local choice_store_weapons = {function(player, choice)
 end, lang.police.menu.store_weapons.description()}
 
 function jail_clock(target_id,timer)
-  local target = vRP.getUserSource({target_id})
+  local target = vRP.getUserSource({tonumber(target_id)})
   if timer>0 then
 	vRPclient.notify(target, {"~r~Remaining time: " .. timer .. " minute(s)."})
-    vRP.setUData({target_id,"vRP:jail:time",json.encode(timer)})
+    vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(timer)})
 	SetTimeout(60*1000, function()
-	  jail_clock(target_id,timer-1)
+	  jail_clock(tonumber(target_id),timer-1)
 	end) 
   else 
 	vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
@@ -309,9 +309,7 @@ local ch_jail = {function(player,choice)
   vRPclient.getNearestPlayers(player,{15},function(nplayers) 
 	local user_list = ""
     for k,v in pairs(nplayers) do
-	  if v<15 then
-		  user_list = user_list .. "[" .. vRP.getUserId({k}) .. "]" .. GetPlayerName(k) .. " | "
-	  end
+	  user_list = user_list .. "[" .. vRP.getUserId({k}) .. "]" .. GetPlayerName(k) .. " | "
     end 
 	if user_list ~= "" then
 	  vRP.prompt({player,"Players Nearby:" .. user_list,"",function(player,target_id) 
@@ -331,7 +329,7 @@ local ch_jail = {function(player,choice)
 				vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
 				vRPclient.notify(target,{"~r~You have been sent to jail."})
 				vRPclient.notify(player,{"~b~You sent a player to jail."})
-				jail_clock(target_id,tonumber(jail_time))
+				jail_clock(tonumber(target_id),tonumber(jail_time))
 			  else
 				vRPclient.notify(player,{"~r~That player is not handcuffed."})
 			  end
@@ -347,6 +345,7 @@ local ch_jail = {function(player,choice)
   end)
 end,"Send a nearby player to jail."}
 
+-- dynamic unjail
 local ch_unjail = {function(player,choice) 
 	vRP.prompt({player,"Players ID:","",function(player,target_id) 
 	  if target_id ~= nil and target_id ~= "" then 
@@ -385,13 +384,54 @@ AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn)
             vRPclient.setHandcuffed(target,{true})
             vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport inside jail
             vRPclient.notify(target,{"~r~Finish your sentence."})
-		    jail_clock(user_id,tonumber(custom))
+		    jail_clock(tonumber(user_id),tonumber(custom))
 		  end
 	    end
 	  end
 	end})
   end)
 end)
+
+-- dynamic fine
+local ch_fine = {function(player,choice) 
+  vRPclient.getNearestPlayers(player,{15},function(nplayers) 
+	local user_list = ""
+    for k,v in pairs(nplayers) do
+	  user_list = user_list .. "[" .. vRP.getUserId({k}) .. "]" .. GetPlayerName(k) .. " | "
+    end 
+	if user_list ~= "" then
+	  vRP.prompt({player,"Players Nearby:" .. user_list,"",function(player,target_id) 
+	    if target_id ~= nil and target_id ~= "" then 
+	      vRP.prompt({player,"Fine amount:","100",function(player,fine)
+	        vRP.prompt({player,"Fine reason:","",function(player,reason)
+	          local target = vRP.getUserSource({tonumber(target_id)})
+		  
+		      if tonumber(fine) > 1000 then
+  			    fine = 1000
+		      end
+		      if tonumber(fine) < 100 then
+		        fine = 100
+		      end
+			  
+		      if vRP.tryFullPayment({tonumber(target_id), amount}) then
+                vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
+                vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
+                vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
+                vRP.closeMenu({player})
+              else
+                vRPclient.notify(player,{lang.money.not_enough()})
+              end
+	        end})
+	      end})
+        else
+          vRPclient.notify(player,{"~r~No player ID selected."})
+        end 
+	  end})
+    else
+      vRPclient.notify(player,{"~r~No player nearby."})
+    end 
+  end)
+end,"Fines a nearby player."}
 
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
@@ -501,6 +541,10 @@ vRP.registerMenuBuilder({"police", function(add, data)
 	
 	if vRP.hasPermission({user_id,"police.easy_unjail"}) then
       choices["Easy UnJail"] = ch_unjail -- Un jails chosen player if he is jailed
+    end
+	
+	if vRP.hasPermission({user_id,"police.easy_fine"}) then
+      choices["Easy Fine"] = ch_fine -- Fines closeby player
     end
 	
     if vRP.hasPermission({user_id,"police.drag"}) then
