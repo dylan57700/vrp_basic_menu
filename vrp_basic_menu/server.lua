@@ -427,7 +427,7 @@ local ch_fine = {function(player,choice)
 		        fine = 100
 		      end
 			  
-		      if vRP.tryFullPayment({tonumber(target_id), fine}) then
+		      if vRP.tryFullPayment({tonumber(target_id), tonumber(fine)}) then
                 vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
                 vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
                 vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
