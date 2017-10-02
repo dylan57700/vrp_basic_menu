@@ -290,17 +290,26 @@ end, lang.police.menu.store_weapons.description()}
 
 function jail_clock(target_id,timer)
   local target = vRP.getUserSource({tonumber(target_id)})
-  if timer>0 then
-	vRPclient.notify(target, {"~r~Remaining time: " .. timer .. " minute(s)."})
-    vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(timer)})
-	SetTimeout(60*1000, function()
-	  jail_clock(tonumber(target_id),timer-1)
-	end) 
-  else 
-	vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
-	vRPclient.setHandcuffed(target,{false})
-    vRPclient.notify(target,{"~b~You have been set free."})
-	vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(-1)})
+  local users = vRP.getUsers({})
+  local online = false
+  for k,v in pairs(users) do
+	if tonumber(k) == tonumber(target_id) then
+	  online = true
+	end
+  end
+  if online then
+    if timer>0 then
+	  vRPclient.notify(target, {"~r~Remaining time: " .. timer .. " minute(s)."})
+      vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(timer)})
+	  SetTimeout(60*1000, function()
+	    jail_clock(tonumber(target_id),timer-1)
+	  end) 
+    else 
+	  vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
+	  vRPclient.setHandcuffed(target,{false})
+      vRPclient.notify(target,{"~b~You have been set free."})
+	  vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(-1)})
+    end
   end
 end
 
