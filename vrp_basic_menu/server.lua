@@ -329,6 +329,8 @@ local ch_jail = {function(player,choice)
 				vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
 				vRPclient.notify(target,{"~r~You have been sent to jail."})
 				vRPclient.notify(player,{"~b~You sent a player to jail."})
+				vRP.setHunger({tonumber(target_id),0})
+				vRP.setThirst({tonumber(target_id),0})
 				jail_clock(tonumber(target_id),tonumber(jail_time))
 			  else
 				vRPclient.notify(player,{"~r~That player is not handcuffed."})
@@ -384,6 +386,8 @@ AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn)
             vRPclient.setHandcuffed(target,{true})
             vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport inside jail
             vRPclient.notify(target,{"~r~Finish your sentence."})
+			vRP.setHunger({tonumber(user_id),0})
+			vRP.setThirst({tonumber(user_id),0})
 		    jail_clock(tonumber(user_id),tonumber(custom))
 		  end
 	    end
