@@ -349,13 +349,14 @@ end,"Send a nearby player to jail."}
 
 -- dynamic unjail
 local ch_unjail = {function(player,choice) 
-	vRP.prompt({player,"Players ID:","",function(player,target_id) 
+	vRP.prompt({player,"Player ID:","",function(player,target_id) 
 	  if target_id ~= nil and target_id ~= "" then 
 		vRP.getUData({tonumber(target_id),"vRP:jail:time",function(value)
 		  if value ~= nil then
 		  custom = json.decode(value)
 			if custom ~= nil then
-			  if tonumber(custom) > 0 then
+			  local user_id = vRP.getUserId({player})
+			  if tonumber(custom) > 0 or vRP.hasPermission({user_id,"admin.easy_unjail"}) then
 	            local target = vRP.getUserSource({tonumber(target_id)})
 				vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
 				vRPclient.setHandcuffed(target,{false})
@@ -525,6 +526,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
       choices["@TpToWaypoint"] = choice_tptowaypoint -- teleport user to map blip
 	end
 	
+	if vRP.hasPermission({user_id,"admin.easy_unjail"}) then
+      choices["@UnJail"] = ch_unjail -- Un jails chosen player if he is jailed (Use admin.easy_unjail as permission to have this in admin menu working in non jailed players)
+    end
+	
     add(choices)
   end
 end})
@@ -544,7 +549,7 @@ vRP.registerMenuBuilder({"police", function(add, data)
     end
 	
 	if vRP.hasPermission({user_id,"police.easy_unjail"}) then
-      choices["Easy UnJail"] = ch_unjail -- Un jails chosen player if he is jailed
+      choices["Easy UnJail"] = ch_unjail -- Un jails chosen player if he is jailed (Use admin.easy_unjail as permission to have this in admin menu working in non jailed players)
     end
 	
 	if vRP.hasPermission({user_id,"police.easy_fine"}) then
