@@ -288,6 +288,41 @@ local choice_store_weapons = {function(player, choice)
   end
 end, lang.police.menu.store_weapons.description()}
 
+-- armor item
+vRP.defInventoryItem({"body_armor","Body Armor","",
+function(args)
+  local choices = {}
+
+  choices["Equip"] = {function(player,choice)
+    local user_id = vRP.getUserId({player})
+    if user_id ~= nil then
+      if vRP.tryGetInventoryItem({user_id, "body_armor", 1, true}) then
+		BMclient.setArmour(player,{100,true})
+        vRP.closeMenu({player})
+      end
+    end
+  end}
+
+  return choices
+end,
+5.00})
+
+-- store armor
+local choice_store_armor = {function(player, choice)
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    BMclient.getArmour(player,{},function(armour)
+      if armour > 95 then
+        vRP.giveInventoryItem({user_id, "body_armor", 1, true})
+        -- clear armor
+	    BMclient.setArmour(player,{0,false})
+	  else
+	    vRPclient.notify(player, {"~r~Damaged armor can't be stored!"})
+      end
+    end)
+  end
+end, "Store intact body armor in inventory."}
+
 function jail_clock(target_id,timer)
   local target = vRP.getUserSource({tonumber(target_id)})
   local users = vRP.getUsers({})
@@ -470,6 +505,10 @@ local ch_player_menu = {function(player,choice)
 	
     if vRP.hasPermission({user_id,"player.store_weapons"}) then
       menu["Store weapons"] = choice_store_weapons -- store player weapons, like police store weapons from vrp
+    end
+	
+    if vRP.hasPermission({user_id,"player.store_armor"}) then
+      menu["Store armor"] = choice_store_armor -- store player armor
     end
 	
     if vRP.hasPermission({user_id,"player.check"}) then
