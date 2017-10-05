@@ -123,6 +123,11 @@ local choice_loot = {function(player,choice)
       if nuser_id ~= nil then
         vRPclient.isInComa(nplayer,{}, function(in_coma)
           if in_coma then
+			local revive_seq = {
+			  {"amb@medic@standing@kneel@enter","enter",1},
+			  {"amb@medic@standing@kneel@idle_a","idle_a",1},
+			  {"amb@medic@standing@kneel@exit","exit",1}
+			}
   			vRPclient.playAnim(player,{false,revive_seq,false}) -- anim
             SetTimeout(15000, function()
               local ndata = vRP.getUserDataTable({nuser_id})
@@ -135,6 +140,7 @@ local choice_loot = {function(player,choice)
 				end
 			  end
             end)
+			vRPclient.stopAnim(player,{false})
           else
             vRPclient.notify(player,{lang.emergency.menu.revive.not_in_coma()})
           end
