@@ -125,13 +125,13 @@ local choice_loot = {function(player,choice)
           if in_coma then
               local ndata = vRP.getUserDataTable({nuser_id})
               if ndata ~= nil then
+				vRP.clearInventory({nuser_id})
   			    vRPclient.playAnim(player,{false,revive_seq,false}) -- anim
                 SetTimeout(15000, function()
 				  if ndata.inventory ~= nil then -- gives inventory items
                     for k,v in pairs(ndata.inventory) do 
 					  vRP.giveInventoryItem({user_id,k,v.amount,true})
 	                end
-					vRP.clearInventory({nuser_id})
 				  end
                 end)
 			  end
