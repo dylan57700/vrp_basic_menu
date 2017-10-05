@@ -123,18 +123,18 @@ local choice_loot = {function(player,choice)
       if nuser_id ~= nil then
         vRPclient.isInComa(nplayer,{}, function(in_coma)
           if in_coma then
+  			vRPclient.playAnim(player,{false,revive_seq,false}) -- anim
+            SetTimeout(15000, function()
               local ndata = vRP.getUserDataTable({nuser_id})
               if ndata ~= nil then
-				vRP.clearInventory({nuser_id})
-  			    vRPclient.playAnim(player,{false,revive_seq,false}) -- anim
-                SetTimeout(15000, function()
-				  if ndata.inventory ~= nil then -- gives inventory items
-                    for k,v in pairs(ndata.inventory) do 
-					  vRP.giveInventoryItem({user_id,k,v.amount,true})
-	                end
-				  end
-                end)
+			    if ndata.inventory ~= nil then -- gives inventory items
+				  vRP.clearInventory({nuser_id})
+                  for k,v in pairs(ndata.inventory) do 
+			        vRP.giveInventoryItem({user_id,k,v.amount,true})
+	              end
+				end
 			  end
+            end)
           else
             vRPclient.notify(player,{lang.emergency.menu.revive.not_in_coma()})
           end
