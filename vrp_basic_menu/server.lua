@@ -369,27 +369,31 @@ local ch_jail = {function(player,choice)
 	  vRP.prompt({player,"Players Nearby:" .. user_list,"",function(player,target_id) 
 	    if target_id ~= nil and target_id ~= "" then 
 	      vRP.prompt({player,"Jail Time in minutes:","1",function(player,jail_time)
-	        local target = vRP.getUserSource({tonumber(target_id)})
+			if jail_time ~= nil and jail_time ~= "" then 
+	          local target = vRP.getUserSource({tonumber(target_id)})
 		  
-		    if tonumber(jail_time) > 30 then
-  			  jail_time = 30
-		    end
-		    if tonumber(jail_time) < 1 then
-		      jail_time = 1
-		    end
+		      if tonumber(jail_time) > 30 then
+  			    jail_time = 30
+		      end
+		      if tonumber(jail_time) < 1 then
+		        jail_time = 1
+		      end
 		  
-            vRPclient.isHandcuffed(target,{}, function(handcuffed)  
-              if handcuffed then 
-				vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
-				vRPclient.notify(target,{"~r~You have been sent to jail."})
-				vRPclient.notify(player,{"~b~You sent a player to jail."})
-				vRP.setHunger({tonumber(target_id),0})
-				vRP.setThirst({tonumber(target_id),0})
-				jail_clock(tonumber(target_id),tonumber(jail_time))
-			  else
-				vRPclient.notify(player,{"~r~That player is not handcuffed."})
-			  end
-			end)
+              vRPclient.isHandcuffed(target,{}, function(handcuffed)  
+                if handcuffed then 
+				  vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
+				  vRPclient.notify(target,{"~r~You have been sent to jail."})
+				  vRPclient.notify(player,{"~b~You sent a player to jail."})
+				  vRP.setHunger({tonumber(target_id),0})
+				  vRP.setThirst({tonumber(target_id),0})
+				  jail_clock(tonumber(target_id),tonumber(jail_time))
+			    else
+				  vRPclient.notify(player,{"~r~That player is not handcuffed."})
+			    end
+			  end)
+			else
+			  vRPclient.notify(player,{"~r~The jail time can't be empty."})
+			end
 	      end})
         else
           vRPclient.notify(player,{"~r~No player ID selected."})
@@ -462,25 +466,33 @@ local ch_fine = {function(player,choice)
 	  vRP.prompt({player,"Players Nearby:" .. user_list,"",function(player,target_id) 
 	    if target_id ~= nil and target_id ~= "" then 
 	      vRP.prompt({player,"Fine amount:","100",function(player,fine)
-	        vRP.prompt({player,"Fine reason:","",function(player,reason)
-	          local target = vRP.getUserSource({tonumber(target_id)})
+			if fine ~= nil and fine ~= "" then 
+	          vRP.prompt({player,"Fine reason:","",function(player,reason)
+			    if reason ~= nil and reason ~= "" then 
+	              local target = vRP.getUserSource({tonumber(target_id)})
 		  
-		      if tonumber(fine) > 1000 then
-  			    fine = 1000
-		      end
-		      if tonumber(fine) < 100 then
-		        fine = 100
-		      end
+		          if tonumber(fine) > 1000 then
+  			        fine = 1000
+		          end
+		          if tonumber(fine) < 100 then
+		            fine = 100
+		          end
 			  
-		      if vRP.tryFullPayment({tonumber(target_id), tonumber(fine)}) then
-                vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
-                vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
-                vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
-                vRP.closeMenu({player})
-              else
-                vRPclient.notify(player,{lang.money.not_enough()})
-              end
-	        end})
+		          if vRP.tryFullPayment({tonumber(target_id), tonumber(fine)}) then
+                    vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
+                    vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
+                    vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
+                    vRP.closeMenu({player})
+                  else
+                    vRPclient.notify(player,{lang.money.not_enough()})
+                  end
+				else
+				  vRPclient.notify(player,{"~r~You can't fine for no reason."})
+				end
+	          end})
+			else
+			  vRPclient.notify(player,{"~r~Your fine has to have a value."})
+			end
 	      end})
         else
           vRPclient.notify(player,{"~r~No player ID selected."})
