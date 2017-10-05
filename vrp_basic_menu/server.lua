@@ -617,7 +617,7 @@ vRP.registerMenuBuilder({"admin", function(add, data)
 	end
 	
 	if vRP.hasPermission({user_id,"admin.godmode"}) then
-      choices["@Godmode"] = ch_godmode -- Toggles admin godmode (Disable the default admin.god permission to use this!) 
+      choices["@Godmode"] = ch_godmode -- Toggles admin godmode (Disable the default admin.god permission to use this!)
 	end
 	
     if vRP.hasPermission({user_id,"player.blips"}) then
