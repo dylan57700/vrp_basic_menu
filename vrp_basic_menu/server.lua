@@ -56,6 +56,10 @@ local ch_sprites = {function(player,choice)
   TriggerClientEvent("showSprites", player)
 end, "Toggle sprites."}
 
+local ch_deleteveh = {function(player,choice)
+  BMclient.deleteNearestVehicle(player,{5})
+end, "Delete nearest car."}
+
 --client function
 local ch_crun = {function(player,choice)
   vRP.prompt({player,"Function:","",function(player,stringToRun) 
@@ -553,6 +557,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
   local user_id = vRP.getUserId({data.player})
   if user_id ~= nil then
     local choices = {}
+	
+	if vRP.hasPermission({user_id,"admin.deleteveh"}) then
+      choices["@DeleteVeh"] = ch_deleteveh -- Delete nearest vehicle (Fixed pull request https://github.com/Sighmir/vrp_basic_menu/pull/11/files/419405349ca0ad2a215df90cfcf656e7aa0f5e9c from benjatw)
+	end
 	
     if vRP.hasPermission({user_id,"player.blips"}) then
       choices["@Blips"] = ch_blips -- turn on map blips and sprites

@@ -6,6 +6,15 @@ function vRPbm.getArmour()
   return GetPedArmour(GetPlayerPed(-1))
 end
 
+function vRPbm.deleteNearestVehicle(radius)
+  local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
+  local v = GetClosestVehicle( x+0.0001, y+0.0001, z+0.0001,radius+0.0001,0,70)
+  SetVehicleHasBeenOwnedByPlayer(v,false)
+  Citizen.InvokeNative(0xAD738C3085FE7E11, v, false, true) -- set not as mission entity
+  SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(v))
+  Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(v))
+end
+
 function vRPbm.setArmour(armour,vest)
   local player = GetPlayerPed(-1)
   if vest then
