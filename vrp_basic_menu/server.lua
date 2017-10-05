@@ -504,6 +504,42 @@ local ch_fine = {function(player,choice)
   end)
 end,"Fines a nearby player."}
 
+-- admin god mode
+local godmode = false
+function task_god(user_id)
+  if godmode then
+    SetTimeout(10000, task_god(user_id))
+  end
+
+  vRP.setHunger({user_id, 0})
+  vRP.setThirst({user_id, 0})
+
+  local player = vRP.getUserSource({user_id})
+  if player ~= nil then
+    vRPclient.setHealth(player, {200})
+  end
+end
+
+function task_godmode(user_id)
+  if godmode then
+    godmode = false
+    local player = vRP.getUserSource({user_id})
+    if player ~= nil then
+      vRPclient.setHealth(player, {100})
+    end
+  else
+    godmode = true
+	task_god(user_id)
+  end
+end
+
+local ch_godmode = {function(player,choice)
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    task_godmode(user_id)
+  end
+end, "Toggles admin godmode."}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -578,6 +614,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
 	
 	if vRP.hasPermission({user_id,"admin.deleteveh"}) then
       choices["@DeleteVeh"] = ch_deleteveh -- Delete nearest vehicle (Fixed pull request https://github.com/Sighmir/vrp_basic_menu/pull/11/files/419405349ca0ad2a215df90cfcf656e7aa0f5e9c from benjatw)
+	end
+	
+	if vRP.hasPermission({user_id,"admin.godmode"}) then
+      choices["@Godmode"] = ch_godmode -- Toggles admin godmode (Disable the default admin.god permission to use this!) 
 	end
 	
     if vRP.hasPermission({user_id,"player.blips"}) then
