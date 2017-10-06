@@ -504,6 +504,19 @@ local ch_fine = {function(player,choice)
   end)
 end,"Fines a nearby player."}
 
+-- improved handcuff
+local ch_handcuff = {function(player,choice)
+  vRPclient.getNearestPlayer(player,{10},function(nplayer)
+    local nuser_id = vRP.getUserId({nplayer})
+    if nuser_id ~= nil then
+      vRPclient.toggleHandcuff(nplayer,{})
+      vRP.closeMenu({nplayer})
+    else
+      vRPclient.notify(player,{lang.common.no_player_near()})
+    end
+  end)
+end,lang.police.menu.handcuff.description()}
+
 -- admin god mode
 local godmode = false
 function task_god(user_id)
@@ -552,6 +565,7 @@ local ch_player_menu = {function(player,choice)
 	local menu = {}
 	menu.name = "Player"
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
+    menu.onclose = function(player) vRP.openMainMenu(player) end -- nest menu
 	
     if vRP.hasPermission({user_id,"player.store_money"}) then
       menu["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
@@ -668,6 +682,10 @@ vRP.registerMenuBuilder({"police", function(add, data)
 	
 	if vRP.hasPermission({user_id,"police.easy_fine"}) then
       choices["Easy Fine"] = ch_fine -- Fines closeby player
+    end
+	
+	if vRP.hasPermission({user_id,"police.easy_cuff"}) then
+      choices["Easy Cuff"] = ch_handcuff -- Toggle cuffs AND CLOSE MENU for nearby player
     end
 	
     if vRP.hasPermission({user_id,"police.drag"}) then
