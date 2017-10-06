@@ -1,5 +1,6 @@
 local Tunnel = module("vrp", "lib/Tunnel")
 local Proxy = module("vrp", "lib/Proxy")
+local htmlEntities = module("vrp", "lib/htmlEntities")
 
 vRP = Proxy.getInterface("vRP")
 vRPclient = Tunnel.getInterface("vRP","vRP_basic_menu")
@@ -553,6 +554,58 @@ local ch_godmode = {function(player,choice)
   end
 end, "Toggles admin godmode."}
 
+local player_lists = {}
+local ch_userlist = {function(player,choice)
+  local user_id = vRP.getUserId({player})
+  if user_id ~= nil then
+    if player_lists[player] then -- hide
+      player_lists[player] = nil
+      vRPclient.removeDiv(player,{"user_list"})
+    else -- show
+      local content = ""
+      local count = 0
+	  local users = vRP.getUsers({})
+      for k,v in pairs(users) do
+        count = count+1
+        local source = vRP.getUserSource({k})
+        vRP.getUserIdentity({k, function(identity)
+          if source ~= nil then
+            content = content.."<br />"..k.." => <span class=\"pseudo\">"..vRP.getPlayerName({source}).."</span>"
+            if identity then
+              content = content.." <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span>"
+            end
+          end
+
+          -- check end
+          count = count-1
+          if count == 0 then
+            player_lists[player] = true
+            local css = [[
+              .div_user_list{ 
+                margin: auto; 
+                padding: 8px; 
+                width: 650px; 
+                margin-top: 80px; 
+                background: black; 
+                color: white; 
+                font-weight: bold; 
+                font-size: 1.1em;
+              } 
+              .div_user_list .pseudo{ 
+                color: rgb(0,255,125);
+              }
+              .div_user_list .name{ 
+                color: #309eff;
+              }
+            ]]
+            vRPclient.setDiv(player,{"user_list", css, content})
+          end
+        end})
+      end
+    end
+  end
+end, "Toggles Userlist."}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -573,6 +626,10 @@ local ch_player_menu = {function(player,choice)
 	
     if vRP.hasPermission({user_id,"player.fix_haircut"}) then
       menu["Fix Haircut"] = ch_fixhair -- just a work around for barbershop green hair bug while I am busy
+    end
+	
+    if vRP.hasPermission({user_id,"player.userlist"}) then
+      menu["User List"] = ch_userlist -- a user list for players with vRP ids, player name and identity names only.
     end
 	
     if vRP.hasPermission({user_id,"player.store_weapons"}) then
