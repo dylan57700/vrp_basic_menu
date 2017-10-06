@@ -565,7 +565,7 @@ local ch_player_menu = {function(player,choice)
 	local menu = {}
 	menu.name = "Player"
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
-    menu.onclose = function(player) vRP.openMainMenu(player) end -- nest menu
+    menu.onclose = function(player) vRP.openMainMenu({player}) end -- nest menu
 	
     if vRP.hasPermission({user_id,"player.store_money"}) then
       menu["Store money"] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
