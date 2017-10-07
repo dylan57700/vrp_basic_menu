@@ -519,38 +519,30 @@ local ch_handcuff = {function(player,choice)
 end,lang.police.menu.handcuff.description()}
 
 -- admin god mode
-local godmode = false
-function task_god(user_id)
-  if godmode then
-    SetTimeout(10000, task_god(user_id))
-  end
+local gods = {}
+function task_god()
+  SetTimeout(10000, task_god)
 
-  vRP.setHunger({user_id, 0})
-  vRP.setThirst({user_id, 0})
+  for k,v in pairs(gods) do
+    vRP.setHunger({v, 0})
+    vRP.setThirst({v, 0})
 
-  local player = vRP.getUserSource({user_id})
-  if player ~= nil then
-    vRPclient.setHealth(player, {200})
-  end
-end
-
-function task_godmode(user_id)
-  if godmode then
-    godmode = false
-    local player = vRP.getUserSource({user_id})
+    local player = vRP.getUserSource({v})
     if player ~= nil then
-      vRPclient.setHealth(player, {100})
+      vRPclient.setHealth(player, {200})
     end
-  else
-    godmode = true
-	task_god(user_id)
   end
 end
+task_god()
 
 local ch_godmode = {function(player,choice)
   local user_id = vRP.getUserId({player})
   if user_id ~= nil then
-    task_godmode(user_id)
+    if gods[player] then
+	  gods[player] = nil
+	else
+	  gods[player] = user_id
+	end
   end
 end, "Toggles admin godmode."}
 
@@ -562,20 +554,20 @@ local ch_userlist = {function(player,choice)
       player_lists[player] = nil
       vRPclient.removeDiv(player,{"user_list"})
     else -- show
-      local content = ""
+      local content = "ID => NICKNAME | FIRSTNAME NAME | JOB"
       local count = 0
 	  local users = vRP.getUsers({})
       for k,v in pairs(users) do
         count = count+1
         local source = vRP.getUserSource({k})
         vRP.getUserIdentity({k, function(identity)
-          if source ~= nil then
+		  if source ~= nil then
             content = content.."<br />"..k.." => <span class=\"pseudo\">"..vRP.getPlayerName({source}).."</span>"
             if identity then
-              content = content.." <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span>"
+              content = content.." | <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span> | <span class=\"job\">"..vRP.getUserGroupByType({user_id,"job"}).."</span>"
             end
           end
-
+		  
           -- check end
           count = count-1
           if count == 0 then
@@ -592,15 +584,18 @@ local ch_userlist = {function(player,choice)
                 font-size: 1.1em;
               } 
               .div_user_list .pseudo{ 
-                color: rgb(0,255,125);
+                color: rgb(66, 244, 107);
               }
               .div_user_list .name{ 
-                color: #309eff;
+                color: rgb(92, 170, 249);
               }
+			  .div_user_list .job{ 
+                color: rgb(247, 193, 93);
+			  }
             ]]
             vRPclient.setDiv(player,{"user_list", css, content})
           end
-        end})
+		end})
       end
     end
   end
