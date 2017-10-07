@@ -575,6 +575,7 @@ local ch_userlist = {function(player,choice)
             local css = [[
               .div_user_list{ 
                 margin: auto; 
+				text-align: center;
                 padding: 8px; 
                 width: 650px; 
                 margin-top: 80px; 
