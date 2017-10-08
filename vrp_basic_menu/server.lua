@@ -564,7 +564,7 @@ local ch_userlist = {function(player,choice)
 		  if source ~= nil then
             content = content.."<br />"..k.." => <span class=\"pseudo\">"..vRP.getPlayerName({source}).."</span>"
             if identity then
-              content = content.." | <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span> | <span class=\"job\">"..vRP.getUserGroupByType({user_id,"job"}).."</span>"
+              content = content.." | <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span> | <span class=\"job\">"..vRP.getUserGroupByType({k,"job"}).."</span>"
             end
           end
 		  
