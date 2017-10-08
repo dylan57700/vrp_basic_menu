@@ -334,6 +334,7 @@ local choice_store_armor = {function(player, choice)
   end
 end, "Store intact body armor in inventory."}
 
+local unjailed = {}
 function jail_clock(target_id,timer)
   local target = vRP.getUserSource({tonumber(target_id)})
   local users = vRP.getUsers({})
@@ -348,6 +349,12 @@ function jail_clock(target_id,timer)
 	  vRPclient.notify(target, {"~r~Remaining time: " .. timer .. " minute(s)."})
       vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(timer)})
 	  SetTimeout(60*1000, function()
+		for k,v in pairs(unjailed) do -- check if player has been unjailed by cop or admin
+		  if v == tonumber(target_id) then
+	        unjailed[v] = nil
+		    timer = 0
+		  end
+		end
 	    jail_clock(tonumber(target_id),timer-1)
 	  end) 
     else 
@@ -417,10 +424,9 @@ local ch_unjail = {function(player,choice)
 			  local user_id = vRP.getUserId({player})
 			  if tonumber(custom) > 0 or vRP.hasPermission({user_id,"admin.easy_unjail"}) then
 	            local target = vRP.getUserSource({tonumber(target_id)})
-				vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
-				vRPclient.setHandcuffed(target,{false})
-				vRPclient.notify(target,{"~b~You have been set free."})
-				vRP.setUData({tonumber(target_id),"vRP:jail:time",json.encode(-1)})
+	            unjailed[target] = tonumber(target_id)
+				vRPclient.notify(player,{"~g~Target will be released soon."})
+				vRPclient.notify(target,{"~g~Someone lowered your sentence."})
 			  else
 				vRPclient.notify(player,{"~r~Target is not jailed."})
 			  end
