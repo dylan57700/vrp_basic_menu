@@ -2,10 +2,21 @@
 vRPbm = {}
 Tunnel.bindInterface("vRP_basic_menu",vRPbm)
 
+local frozen = false
+local unfrozen = false
+function vRPbm.loadFreeze(freeze)
+	if freeze then
+	  frozen = true
+	  unfrozen = false
+	else
+	  unfrozen = true
+	end
+end
+
 function vRPbm.getArmour()
   return GetPedArmour(GetPlayerPed(-1))
 end
-
+		
 function vRPbm.deleteNearestVehicle(radius)
   local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
   local v = GetClosestVehicle( x+0.0001, y+0.0001, z+0.0001,radius+0.0001,0,70)
@@ -53,4 +64,22 @@ Citizen.CreateThread(function()
 	  end
     end
   end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		if frozen then
+			if unfrozen then
+				SetEntityInvincible(GetPlayerPed(-1),false)
+				SetEntityVisible(GetPlayerPed(-1),true)
+				FreezeEntityPosition(GetPlayerPed(-1),false)
+				frozen = false
+			else
+				SetEntityInvincible(GetPlayerPed(-1),true)
+				SetEntityVisible(GetPlayerPed(-1),false)
+				FreezeEntityPosition(GetPlayerPed(-1),true)
+			end
+		end
+		Citizen.Wait(0)
+	end
 end)

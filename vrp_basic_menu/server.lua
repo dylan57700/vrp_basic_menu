@@ -358,6 +358,10 @@ function jail_clock(target_id,timer)
 	    jail_clock(tonumber(target_id),timer-1)
 	  end) 
     else 
+	  BMclient.loadFreeze(target,{true})
+	  SetTimeout(15000,function()
+		BMclient.loadFreeze(target,{false})
+	  end)
 	  vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
 	  vRPclient.setHandcuffed(target,{false})
       vRPclient.notify(target,{"~b~You have been set free."})
@@ -379,26 +383,33 @@ local ch_jail = {function(player,choice)
 	      vRP.prompt({player,"Jail Time in minutes:","1",function(player,jail_time)
 			if jail_time ~= nil and jail_time ~= "" then 
 	          local target = vRP.getUserSource({tonumber(target_id)})
+			  if target then
+		        if tonumber(jail_time) > 30 then
+  			      jail_time = 30
+		        end
+		        if tonumber(jail_time) < 1 then
+		          jail_time = 1
+		        end
 		  
-		      if tonumber(jail_time) > 30 then
-  			    jail_time = 30
-		      end
-		      if tonumber(jail_time) < 1 then
-		        jail_time = 1
-		      end
-		  
-              vRPclient.isHandcuffed(target,{}, function(handcuffed)  
-                if handcuffed then 
-				  vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
-				  vRPclient.notify(target,{"~r~You have been sent to jail."})
-				  vRPclient.notify(player,{"~b~You sent a player to jail."})
-				  vRP.setHunger({tonumber(target_id),0})
-				  vRP.setThirst({tonumber(target_id),0})
-				  jail_clock(tonumber(target_id),tonumber(jail_time))
-			    else
-				  vRPclient.notify(player,{"~r~That player is not handcuffed."})
-			    end
-			  end)
+                vRPclient.isHandcuffed(target,{}, function(handcuffed)  
+                  if handcuffed then 
+					BMclient.loadFreeze(target,{true})
+					SetTimeout(15000,function()
+					  BMclient.loadFreeze(target,{false})
+					end)
+				    vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
+				    vRPclient.notify(target,{"~r~You have been sent to jail."})
+				    vRPclient.notify(player,{"~b~You sent a player to jail."})
+				    vRP.setHunger({tonumber(target_id),0})
+				    vRP.setThirst({tonumber(target_id),0})
+				    jail_clock(tonumber(target_id),tonumber(jail_time))
+			      else
+				    vRPclient.notify(player,{"~r~That player is not handcuffed."})
+			      end
+			    end)
+			  else
+				vRPclient.notify(player,{"~r~That ID seems invalid."})
+			  end
 			else
 			  vRPclient.notify(player,{"~r~The jail time can't be empty."})
 			end
@@ -424,9 +435,13 @@ local ch_unjail = {function(player,choice)
 			  local user_id = vRP.getUserId({player})
 			  if tonumber(custom) > 0 or vRP.hasPermission({user_id,"admin.easy_unjail"}) then
 	            local target = vRP.getUserSource({tonumber(target_id)})
-	            unjailed[target] = tonumber(target_id)
-				vRPclient.notify(player,{"~g~Target will be released soon."})
-				vRPclient.notify(target,{"~g~Someone lowered your sentence."})
+				if target then
+	              unjailed[target] = tonumber(target_id)
+				  vRPclient.notify(player,{"~g~Target will be released soon."})
+				  vRPclient.notify(target,{"~g~Someone lowered your sentence."})
+				else
+				  vRPclient.notify(player,{"~r~That ID seems invalid."})
+				end
 			  else
 				vRPclient.notify(player,{"~r~Target is not jailed."})
 			  end
@@ -449,6 +464,10 @@ AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn)
 	    custom = json.decode(value)
 	    if custom ~= nil then
 		  if tonumber(custom) > 0 then
+			BMclient.loadFreeze(target,{true})
+			SetTimeout(15000,function()
+			  BMclient.loadFreeze(target,{false})
+			end)
             vRPclient.setHandcuffed(target,{true})
             vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport inside jail
             vRPclient.notify(target,{"~r~Finish your sentence."})
