@@ -579,7 +579,7 @@ local ch_userlist = {function(player,choice)
       player_lists[player] = nil
       vRPclient.removeDiv(player,{"user_list"})
     else -- show
-      local content = "ID => NICKNAME | FIRSTNAME NAME | JOB"
+      local content = "<span class=\"id\">ID</span><span class=\"pseudo\">NICKNAME</span><span class=\"name\">ROLEPLAY NAME</span><span class=\"job\">PROFESSION</span>"
       local count = 0
 	  local users = vRP.getUsers({})
       for k,v in pairs(users) do
@@ -587,9 +587,9 @@ local ch_userlist = {function(player,choice)
         local source = vRP.getUserSource({k})
         vRP.getUserIdentity({k, function(identity)
 		  if source ~= nil then
-            content = content.."<br />"..k.." => <span class=\"pseudo\">"..vRP.getPlayerName({source}).."</span>"
+            content = content.."<br /><span class=\"id\">"..k.."</span><span class=\"pseudo\">"..vRP.getPlayerName({source}).."</span>"
             if identity then
-              content = content.." | <span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span> | <span class=\"job\">"..vRP.getUserGroupByType({k,"job"}).."</span>"
+              content = content.."<span class=\"name\">"..htmlEntities.encode(identity.firstname).." "..htmlEntities.encode(identity.name).."</span><span class=\"job\">"..vRP.getUserGroupByType({k,"job"}).."</span>"
             end
           end
 		  
@@ -600,23 +600,34 @@ local ch_userlist = {function(player,choice)
             local css = [[
               .div_user_list{ 
                 margin: auto; 
-				text-align: center;
+				text-align: left;
                 padding: 8px; 
                 width: 650px; 
-                margin-top: 80px; 
-                background: black; 
+                margin-top: 100px; 
+                background: rgba(50,50,50,0.75); 
                 color: white; 
                 font-weight: bold; 
                 font-size: 1.1em;
               } 
+              .div_user_list span{ 
+				display: inline-block;
+				text-align: center;
+              } 
+              .div_user_list .id{ 
+                color: rgb(255, 255, 255);
+                width: 45px; 
+              }
               .div_user_list .pseudo{ 
                 color: rgb(66, 244, 107);
+                width: 145px; 
               }
               .div_user_list .name{ 
                 color: rgb(92, 170, 249);
+                width: 295px; 
               }
 			  .div_user_list .job{ 
                 color: rgb(247, 193, 93);
+                width: 145px; 
 			  }
             ]]
             vRPclient.setDiv(player,{"user_list", css, content})
