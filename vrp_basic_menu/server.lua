@@ -383,7 +383,7 @@ local ch_jail = {function(player,choice)
 	      vRP.prompt({player,"Jail Time in minutes:","1",function(player,jail_time)
 			if jail_time ~= nil and jail_time ~= "" then 
 	          local target = vRP.getUserSource({tonumber(target_id)})
-			  if target then
+			  if target ~= nil then
 		        if tonumber(jail_time) > 30 then
   			      jail_time = 30
 		        end
@@ -435,7 +435,7 @@ local ch_unjail = {function(player,choice)
 			  local user_id = vRP.getUserId({player})
 			  if tonumber(custom) > 0 or vRP.hasPermission({user_id,"admin.easy_unjail"}) then
 	            local target = vRP.getUserSource({tonumber(target_id)})
-				if target then
+				if target ~= nil then
 	              unjailed[target] = tonumber(target_id)
 				  vRPclient.notify(player,{"~g~Target will be released soon."})
 				  vRPclient.notify(target,{"~g~Someone lowered your sentence."})
@@ -496,22 +496,25 @@ local ch_fine = {function(player,choice)
 	          vRP.prompt({player,"Fine reason:","",function(player,reason)
 			    if reason ~= nil and reason ~= "" then 
 	              local target = vRP.getUserSource({tonumber(target_id)})
-		  
-		          if tonumber(fine) > 1000 then
-  			        fine = 1000
-		          end
-		          if tonumber(fine) < 100 then
-		            fine = 100
-		          end
+				  if target ~= nil then
+		            if tonumber(fine) > 1000 then
+  			          fine = 1000
+		            end
+		            if tonumber(fine) < 100 then
+		              fine = 100
+		            end
 			  
-		          if vRP.tryFullPayment({tonumber(target_id), tonumber(fine)}) then
-                    vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
-                    vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
-                    vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
-                    vRP.closeMenu({player})
-                  else
-                    vRPclient.notify(player,{lang.money.not_enough()})
-                  end
+		            if vRP.tryFullPayment({tonumber(target_id), tonumber(fine)}) then
+                      vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
+                      vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
+                      vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
+                      vRP.closeMenu({player})
+                    else
+                      vRPclient.notify(player,{lang.money.not_enough()})
+                    end
+				  else
+					vRPclient.notify(player,{"~r~That ID seems invalid."})
+				  end
 				else
 				  vRPclient.notify(player,{"~r~You can't fine for no reason."})
 				end
@@ -604,7 +607,7 @@ local ch_userlist = {function(player,choice)
                 padding: 8px; 
                 width: 650px; 
                 margin-top: 100px; 
-                background: rgba(50,50,50,0.75); 
+                background: rgba(50,50,50,0.0); 
                 color: white; 
                 font-weight: bold; 
                 font-size: 1.1em;
@@ -637,6 +640,58 @@ local ch_userlist = {function(player,choice)
     end
   end
 end, "Toggles Userlist."}
+
+-- mobilepay
+local ch_mobilepay = {function(player,choice) 
+	local user_id = vRP.getUserId({player})
+	local menu = {}
+	menu.name = lang.phone.directory.title()
+	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
+    menu.onclose = function(player) vRP.openMainMenu({player}) end -- nest menu
+	local directory = vRP.getPhoneDirectory({user_id})
+	for k,v in pairs(directory) do
+	  menu[k] = {
+	    -- payment function
+	    function(player,choice) 
+	      vRP.prompt({player,"Amount to be sent to "..k..":","0",function(player,transfer)
+			if transfer ~= nil and transfer ~= "" and tonumber(transfer)>0 then 
+			  vRP.getUserByPhone({v, function(target_id)
+				  local my_bank = vRP.getBankMoney({user_id}) - tonumber(transfer)
+				  if target_id~=nil then
+		            if my_bank >= 0 then
+					  local target = vRP.getUserSource({target_id})
+					  if target ~= nil then
+					    vRP.setBankMoney({user_id,my_bank})
+                        vRPclient.notify(player,{"~g~You tranfered ~r~$"..transfer.." ~g~to ~b~"..k})
+					    local target_bank = vRP.getBankMoney({target_id})
+					    vRP.setBankMoney({target_id,tonumber(transfer)+target_bank})
+					    vRP.getUserIdentity({user_id, function(identity)
+						  local directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
+						  if directory_name == "unknown" then
+						    directory_name = identity.phone
+						  end
+                          vRPclient.notify(target,{"~g~You received ~y~$"..transfer.." ~g~from ~b~"..directory_name})
+					    end})
+                        vRP.closeMenu({player})
+					  else
+						vRPclient.notify(player,{"~r~You can't make payments to offline players."})
+					  end
+                    else
+                      vRPclient.notify(player,{lang.money.not_enough()})
+                    end
+				  else
+					vRPclient.notify(player,{"~r~That target ID seems invalid."})
+				  end
+			  end})
+			else
+			  vRPclient.notify(player,{"~r~The value has to be bigger than 0."})
+			end
+	      end})
+	    end
+	  ,v} -- number as description
+	end
+	vRP.openMenu({player, menu})
+end,"Transfer money trough phone."}
 
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
@@ -783,4 +838,14 @@ vRP.registerMenuBuilder({"police", function(add, data)
 	
     add(choices)
   end
+end})
+
+-- REGISTER PHONE MENU CHOICES
+-- TO USE THIS FUNCTION YOU NEED TO HAVE THE ORIGINAL vRP UPDATED TO THE LASTEST VERSION
+vRP.registerMenuBuilder({"phone", function(add) -- phone menu is created on server start, so it has no permissions.
+    local choices = {} -- Comment the choices you want to disable by adding -- in front of them.
+	
+    choices["MobilePay"] = ch_mobilepay -- transfer money through phone
+	
+    add(choices)
 end})
