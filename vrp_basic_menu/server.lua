@@ -256,9 +256,9 @@ local choice_player_check = {function(player,choice)
         local data = vRP.getUserDataTable({nuser_id})
         if data and data.inventory then
           for k,v in pairs(data.inventory) do
-            local item = vRP.items[k]
+            local item_name = vRP.getItemName({k})
             if item then
-              items = items.."<br />"..item.name.." ("..v.amount..")"
+              items = items.."<br />"..item_name.." ("..v.amount..")"
             end
           end
         end
