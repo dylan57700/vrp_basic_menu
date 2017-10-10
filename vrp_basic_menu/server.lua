@@ -676,7 +676,7 @@ function vRPbm.payPhoneNumber(user_id,phone)
               vRPclient.notify(player,{"~g~You tranfered ~r~$"..transfer.." ~g~to ~b~"..directory_name})
 			  local target_bank = vRP.getBankMoney({target_id}) + tonumber(transfer)
 			  vRP.setBankMoney({target_id,target_bank})
-			  vRPbm.logInfoToFile("mpayLog.txt",user_id .. " mobile paid "..target_id.." the amount of " .. transfer .. ".\n"..user_id.." bank after payment:"..my_bank..".\n"..user_id.." bank after payment:"..target_bank)
+			  vRPbm.logInfoToFile("mpayLog.txt",user_id .. " mobile paid "..target_id.." the amount of " .. transfer .. ", user bank post-payment for "..user_id.." equals $"..my_bank.." and for "..user_id.." equals $"..target_bank)
 			  vRP.getUserIdentity({user_id, function(identity)
 		        local my_directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
 			    if my_directory_name == "unknown" then
