@@ -13,8 +13,15 @@ local Lang = module("vrp", "lib/Lang")
 local cfg = module("vrp", "cfg/base")
 local lang = Lang.new(module("vrp", "cfg/lang/"..cfg.lang) or {})
 
+-- LOG FUNCTION
+function vRPbm.logInfoToFile(file,info)
+  file = io.open(file, "a")
+  if file then
+    file:write(os.date("%c").." => "..info.."\n")
+  end
+  file:close()
+end
 -- MAKE CHOICES
-
 --toggle service
 local choice_service = {function(player,choice)
   local user_id = vRP.getUserId({player})
@@ -405,6 +412,8 @@ local ch_jail = {function(player,choice)
 				    vRP.setHunger({tonumber(target_id),0})
 				    vRP.setThirst({tonumber(target_id),0})
 				    jail_clock(tonumber(target_id),tonumber(jail_time))
+					local user_id = vRP.getUserId({player})
+					vRPbm.logInfoToFile("jailLog.txt",user_id .. " jailed "..target_id.." for " .. jail_time .. " minutes")
 			      else
 				    vRPclient.notify(player,{"~r~That player is not handcuffed."})
 			      end
@@ -441,6 +450,7 @@ local ch_unjail = {function(player,choice)
 	              unjailed[target] = tonumber(target_id)
 				  vRPclient.notify(player,{"~g~Target will be released soon."})
 				  vRPclient.notify(target,{"~g~Someone lowered your sentence."})
+				  vRPbm.logInfoToFile("jailLog.txt",user_id .. " freed "..target_id.." from a " .. custom .. " minutes sentence")
 				else
 				  vRPclient.notify(player,{"~r~That ID seems invalid."})
 				end
@@ -475,6 +485,7 @@ AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn)
             vRPclient.notify(target,{"~r~Finish your sentence."})
 			vRP.setHunger({tonumber(user_id),0})
 			vRP.setThirst({tonumber(user_id),0})
+			vRPbm.logInfoToFile("jailLog.txt",user_id.." has been sent back to jail for " .. custom .. " minutes to complete his sentence")
 		    jail_clock(tonumber(user_id),tonumber(custom))
 		  end
 	    end
@@ -510,6 +521,8 @@ local ch_fine = {function(player,choice)
                       vRP.insertPoliceRecord({tonumber(target_id), lang.police.menu.fine.record({reason,fine})})
                       vRPclient.notify(player,{lang.police.menu.fine.fined({reason,fine})})
                       vRPclient.notify(target,{lang.police.menu.fine.notify_fined({reason,fine})})
+					  local user_id = vRP.getUserId({player})
+					  vRPbm.logInfoToFile("fineLog.txt",user_id .. " fined "..target_id.." the amount of " .. fine .. " for ".. reason)
                       vRP.closeMenu({player})
                     else
                       vRPclient.notify(player,{lang.money.not_enough()})
@@ -541,6 +554,8 @@ local ch_handcuff = {function(player,choice)
     local nuser_id = vRP.getUserId({nplayer})
     if nuser_id ~= nil then
       vRPclient.toggleHandcuff(nplayer,{})
+	  local user_id = vRP.getUserId({player})
+	  vRPbm.logInfoToFile("jailLog.txt",user_id .. " cuffed "..nuser_id)
       vRP.closeMenu({nplayer})
     else
       vRPclient.notify(player,{lang.common.no_player_near()})
@@ -659,8 +674,9 @@ function vRPbm.payPhoneNumber(user_id,phone)
 			if target ~= nil then
 			  vRP.setBankMoney({user_id,my_bank})
               vRPclient.notify(player,{"~g~You tranfered ~r~$"..transfer.." ~g~to ~b~"..directory_name})
-			  local target_bank = vRP.getBankMoney({target_id})
-			  vRP.setBankMoney({target_id,tonumber(transfer)+target_bank})
+			  local target_bank = vRP.getBankMoney({target_id}) + tonumber(transfer)
+			  vRP.setBankMoney({target_id,target_bank})
+			  vRPbm.logInfoToFile("mpayLog.txt",user_id .. " mobile paid "..target_id.." the amount of " .. transfer .. ".\n"..user_id.." bank after payment:"..my_bank..".\n"..user_id.." bank after payment:"..target_bank)
 			  vRP.getUserIdentity({user_id, function(identity)
 		        local my_directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
 			    if my_directory_name == "unknown" then
