@@ -60,7 +60,7 @@ local ch_sprites = {function(player,choice)
 end, "Toggle sprites."}
 
 local ch_deleteveh = {function(player,choice)
-  BMclient.deleteNearestVehicle(player,{5})
+  BMclient.deleteVehicleInFrontOrInside(player,{5.0})
 end, "Delete nearest car."}
 
 --client function

@@ -18,6 +18,12 @@ function vRPbm.getArmour()
   return GetPedArmour(GetPlayerPed(-1))
 end
 
+function vRPbm.getVehicleInDirection( coordFrom, coordTo )
+    local rayHandle = CastRayPointToPoint( coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed( -1 ), 0 )
+    local _, _, _, _, vehicle = GetRaycastResult( rayHandle )
+    return vehicle
+end
+
 function vRPbm.getNearestVehicle(radius)
   local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
   local ped = GetPlayerPed(-1)
@@ -32,6 +38,26 @@ function vRPbm.getNearestVehicle(radius)
     local veh = GetClosestVehicle(x+0.0001,y+0.0001,z+0.0001, radius+5.0001, 0, 8192+4096+4+2+1)  -- boats, helicos
     if not IsEntityAVehicle(veh) then veh = GetClosestVehicle(x+0.0001,y+0.0001,z+0.0001, radius+5.0001, 0, 4+2+1) end -- cars
     return veh
+  end
+end
+
+function vRPbm.deleteVehicleInFrontOrInside(offset)
+  local ped = GetPlayerPed(-1)
+  local veh = nil
+  if (IsPedSittingInAnyVehicle(ped)) then 
+    veh = GetVehiclePedIsIn(ped, false)
+  else
+    veh = vRPbm.getVehicleInDirection(GetEntityCoords(ped, 1), GetOffsetFromEntityInWorldCoords(ped, 0.0, offset, 0.0))
+  end
+  
+  if IsEntityAVehicle(veh) then
+    SetVehicleHasBeenOwnedByPlayer(veh,false)
+    Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
+    SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
+    Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
+    vRP.notify({"~g~Vehicle deleted."})
+  else
+    vRP.notify({"~r~Too far away from vehicle."})
   end
 end
 
