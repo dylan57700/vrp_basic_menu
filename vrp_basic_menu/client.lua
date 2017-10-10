@@ -1,6 +1,7 @@
 --bind client tunnel interface
 vRPbm = {}
 Tunnel.bindInterface("vRP_basic_menu",vRPbm)
+vRP = Proxy.getInterface("vRP")
 
 local frozen = false
 local unfrozen = false
@@ -16,14 +17,37 @@ end
 function vRPbm.getArmour()
   return GetPedArmour(GetPlayerPed(-1))
 end
-		
+
+function vRPbm.getNearestVehicle(radius)
+  local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
+  local ped = GetPlayerPed(-1)
+  if IsPedSittingInAnyVehicle(ped) then
+    return GetVehiclePedIsIn(ped, true)
+  else
+    -- flags used:
+    --- 8192: boat
+    --- 4096: helicos
+    --- 4,2,1: cars (with police)
+
+    local veh = GetClosestVehicle(x+0.0001,y+0.0001,z+0.0001, radius+5.0001, 0, 8192+4096+4+2+1)  -- boats, helicos
+    if not IsEntityAVehicle(veh) then veh = GetClosestVehicle(x+0.0001,y+0.0001,z+0.0001, radius+5.0001, 0, 4+2+1) end -- cars
+    return veh
+  end
+end
+
 function vRPbm.deleteNearestVehicle(radius)
   local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
-  local v = GetClosestVehicle( x+0.0001, y+0.0001, z+0.0001,radius+0.0001,0,70)
-  SetVehicleHasBeenOwnedByPlayer(v,false)
-  Citizen.InvokeNative(0xAD738C3085FE7E11, v, false, true) -- set not as mission entity
-  SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(v))
-  Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(v))
+  local veh = vRPbm.getNearestVehicle(radius)
+  
+  if IsEntityAVehicle(veh) then
+    SetVehicleHasBeenOwnedByPlayer(veh,false)
+    Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
+    SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
+    Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
+    vRP.notify({"~g~Vehicle deleted."})
+  else
+    vRP.notify({"~r~Too far away from vehicle."})
+  end
 end
 
 function vRPbm.setArmour(armour,vest)
