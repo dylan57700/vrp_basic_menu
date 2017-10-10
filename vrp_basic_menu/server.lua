@@ -2,10 +2,12 @@ local Tunnel = module("vrp", "lib/Tunnel")
 local Proxy = module("vrp", "lib/Proxy")
 local htmlEntities = module("vrp", "lib/htmlEntities")
 
+vRPbm = {}
 vRP = Proxy.getInterface("vRP")
 vRPclient = Tunnel.getInterface("vRP","vRP_basic_menu")
 BMclient = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
 vRPbsC = Tunnel.getInterface("vRP_barbershop","vRP_basic_menu")
+Tunnel.bindInterface("vrp_basic_menu",vRPbm)
 
 local Lang = module("vrp", "lib/Lang")
 local cfg = module("vrp", "cfg/base")
@@ -641,6 +643,48 @@ local ch_userlist = {function(player,choice)
   end
 end, "Toggles Userlist."}
 
+function vRPbm.payPhoneNumber(user_id,phone)
+  local player = vRP.getUserSource({user_id})
+  local directory_name = vRP.getPhoneDirectoryName({user_id, phone})
+  if directory_name == "unknown" then
+	directory_name = phone
+  end
+  vRP.prompt({player,"Amount to be sent to "..directory_name..":","0",function(player,transfer)
+	if transfer ~= nil and transfer ~= "" and tonumber(transfer)>0 then 
+	  vRP.getUserByPhone({phone, function(target_id)
+	    local my_bank = vRP.getBankMoney({user_id}) - tonumber(transfer)
+		if target_id~=nil then
+          if my_bank >= 0 then
+		    local target = vRP.getUserSource({target_id})
+			if target ~= nil then
+			  vRP.setBankMoney({user_id,my_bank})
+              vRPclient.notify(player,{"~g~You tranfered ~r~$"..transfer.." ~g~to ~b~"..directory_name})
+			  local target_bank = vRP.getBankMoney({target_id})
+			  vRP.setBankMoney({target_id,tonumber(transfer)+target_bank})
+			  vRP.getUserIdentity({user_id, function(identity)
+		        local my_directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
+			    if my_directory_name == "unknown" then
+		          my_directory_name = identity.phone
+			    end
+                vRPclient.notify(target,{"~g~You received ~y~$"..transfer.." ~g~from ~b~"..my_directory_name})
+			  end})
+              vRP.closeMenu({player})
+			else
+			  vRPclient.notify(player,{"~r~You can't make payments to offline players."})
+			end
+          else
+            vRPclient.notify(player,{lang.money.not_enough()})
+          end
+		else
+		  vRPclient.notify(player,{"~r~That phone number seems invalid."})
+		end
+	  end})
+	else
+	  vRPclient.notify(player,{"~r~The value has to be bigger than 0."})
+	end
+  end})
+end
+
 -- mobilepay
 local ch_mobilepay = {function(player,choice) 
 	local user_id = vRP.getUserId({player})
@@ -648,45 +692,23 @@ local ch_mobilepay = {function(player,choice)
 	menu.name = lang.phone.directory.title()
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
     menu.onclose = function(player) vRP.openMainMenu({player}) end -- nest menu
+	menu[">Type Number"] = {
+	  -- payment function
+	  function(player,choice) 
+	    vRP.prompt({player,"Phone Number:","000-0000",function(player,phone)
+	      if phone ~= nil and phone ~= "" then 
+		    vRPbm.payPhoneNumber(user_id,phone)
+		  else
+		    vRPclient.notify(player,{"~r~You have to digit a phone number."})
+		  end
+	    end})
+	  end,"Type the phone number manually."}
 	local directory = vRP.getPhoneDirectory({user_id})
 	for k,v in pairs(directory) do
 	  menu[k] = {
 	    -- payment function
 	    function(player,choice) 
-	      vRP.prompt({player,"Amount to be sent to "..k..":","0",function(player,transfer)
-			if transfer ~= nil and transfer ~= "" and tonumber(transfer)>0 then 
-			  vRP.getUserByPhone({v, function(target_id)
-				  local my_bank = vRP.getBankMoney({user_id}) - tonumber(transfer)
-				  if target_id~=nil then
-		            if my_bank >= 0 then
-					  local target = vRP.getUserSource({target_id})
-					  if target ~= nil then
-					    vRP.setBankMoney({user_id,my_bank})
-                        vRPclient.notify(player,{"~g~You tranfered ~r~$"..transfer.." ~g~to ~b~"..k})
-					    local target_bank = vRP.getBankMoney({target_id})
-					    vRP.setBankMoney({target_id,tonumber(transfer)+target_bank})
-					    vRP.getUserIdentity({user_id, function(identity)
-						  local directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
-						  if directory_name == "unknown" then
-						    directory_name = identity.phone
-						  end
-                          vRPclient.notify(target,{"~g~You received ~y~$"..transfer.." ~g~from ~b~"..directory_name})
-					    end})
-                        vRP.closeMenu({player})
-					  else
-						vRPclient.notify(player,{"~r~You can't make payments to offline players."})
-					  end
-                    else
-                      vRPclient.notify(player,{lang.money.not_enough()})
-                    end
-				  else
-					vRPclient.notify(player,{"~r~That target ID seems invalid."})
-				  end
-			  end})
-			else
-			  vRPclient.notify(player,{"~r~The value has to be bigger than 0."})
-			end
-	      end})
+		  vRPbm.payPhoneNumber(user_id,v)
 	    end
 	  ,v} -- number as description
 	end
