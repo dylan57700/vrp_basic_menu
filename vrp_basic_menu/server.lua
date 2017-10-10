@@ -244,7 +244,7 @@ local ch_drag = {function(player,choice)
 end, "Drag closest player."}
 
 -- player check
-local choice_player_check = {function(player,choice)
+local choice_player_check = {function(player,choice) -- inspect still broken
   vRPclient.getNearestPlayer(player,{5},function(nplayer)
     local nuser_id = vRP.getUserId({nplayer})
     if nuser_id ~= nil then
