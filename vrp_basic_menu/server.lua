@@ -244,7 +244,7 @@ local ch_drag = {function(player,choice)
 end, "Drag closest player."}
 
 -- player check
-local choice_player_check = {function(player,choice) -- inspect still broken
+local choice_player_check = {function(player,choice)
   vRPclient.getNearestPlayer(player,{5},function(nplayer)
     local nuser_id = vRP.getUserId({nplayer})
     if nuser_id ~= nil then
@@ -257,7 +257,7 @@ local choice_player_check = {function(player,choice) -- inspect still broken
         if data and data.inventory then
           for k,v in pairs(data.inventory) do
             local item_name = vRP.getItemName({k})
-            if item then
+            if item_name then
               items = items.."<br />"..item_name.." ("..v.amount..")"
             end
           end
