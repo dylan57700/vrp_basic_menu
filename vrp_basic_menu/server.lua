@@ -62,6 +62,24 @@ local ch_blips = {function(player,choice)
   TriggerClientEvent("showBlips", player)
 end, "Toggle blips."}
 
+local spikes = {}
+local ch_spikes = {function(player,choice)
+	local user_id = vRP.getUserId({player})
+	BMclient.isCloseToSpikes(player,{},function(closeby)
+		if closeby and (spikes[player] or vRP.hasPermission({user_id,"admin.spikes"})) then
+		  BMclient.removeSpikes(player,{})
+		  spikes[player] = false
+		elseif closeby and not spikes[player] and not vRP.hasPermission({user_id,"admin.spikes"}) then
+		  vRPclient.notify(player,{"~r~You can carry only one set of spikes!"})
+		elseif not closeby and spikes[player] and not vRP.hasPermission({user_id,"admin.spikes"}) then
+		  vRPclient.notify(player,{"~r~You can deploy only one set of spikes!"})
+		elseif not closeby and (not spikes[player] or vRP.hasPermission({user_id,"admin.spikes"})) then
+		  BMclient.setSpikesOnGround(player,{})
+		  spikes[player] = true
+		end
+	end)
+end, "Toggle spikes."}
+
 local ch_sprites = {function(player,choice)
   TriggerClientEvent("showSprites", player)
 end, "Toggle sprites."}
@@ -840,6 +858,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
       choices["@UnJail"] = ch_unjail -- Un jails chosen player if he is jailed (Use admin.easy_unjail as permission to have this in admin menu working in non jailed players)
     end
 	
+	if vRP.hasPermission({user_id,"admin.spikes"}) then
+      choices["@Spikes"] = ch_spikes -- Toggle spikes
+    end
+	
     add(choices)
   end
 end})
@@ -868,6 +890,10 @@ vRP.registerMenuBuilder({"police", function(add, data)
 	
 	if vRP.hasPermission({user_id,"police.easy_cuff"}) then
       choices["Easy Cuff"] = ch_handcuff -- Toggle cuffs AND CLOSE MENU for nearby player
+    end
+	
+	if vRP.hasPermission({user_id,"police.spikes"}) then
+      choices["Spikes"] = ch_spikes -- Toggle spikes
     end
 	
     if vRP.hasPermission({user_id,"police.drag"}) then

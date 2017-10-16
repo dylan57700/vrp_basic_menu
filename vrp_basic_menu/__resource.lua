@@ -7,11 +7,12 @@ dependency "vrp"
 client_scripts{ 
   "client/Tunnel.lua",
   "client/Proxy.lua",
+  "client.lua",
   "playerblips/client.lua",
   "runcode/client.lua",
   "tptowaypoint/client.lua",
   "drag/client.lua",
-  "client.lua"
+  "spikes/client.lua"
 }
 
 server_scripts{ 
