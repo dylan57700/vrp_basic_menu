@@ -676,6 +676,61 @@ local ch_userlist = {function(player,choice)
   end
 end, "Toggles Userlist."}
 
+function vRPbm.chargePhoneNumber(user_id,phone)
+  local player = vRP.getUserSource({user_id})
+  local directory_name = vRP.getPhoneDirectoryName({user_id, phone})
+  if directory_name == "unknown" then
+	directory_name = phone
+  end
+  vRP.prompt({player,"Amount to be charged to "..directory_name..":","0",function(player,charge)
+	if charge ~= nil and charge ~= "" and tonumber(charge)>0 then 
+	  vRP.getUserByPhone({phone, function(target_id)
+		if target_id~=nil then
+			if charge ~= nil and charge ~= "" then 
+	          local target = vRP.getUserSource({target_id})
+			  if target ~= nil then
+				vRP.getUserIdentity({user_id, function(identity)
+				  local my_directory_name = vRP.getPhoneDirectoryName({target_id, identity.phone})
+				  if my_directory_name == "unknown" then
+				    my_directory_name = identity.phone
+				  end
+			      local text = "~b~" .. my_directory_name .. "~w~ is charging you ~r~$" .. charge .. "~w~ for his services."
+				  vRP.request({target,text,600,function(req_player,ok)
+				    if ok then
+					  local target_bank = vRP.getBankMoney({target_id}) - tonumber(charge)
+					  local my_bank = vRP.getBankMoney({user_id}) + tonumber(charge)
+		              if target_bank>0 then
+					    vRP.setBankMoney({user_id,my_bank})
+					    vRP.setBankMoney({target_id,target_bank})
+					    vRPclient.notify(player,{"You charged ~y~$"..charge.." ~w~from ~b~"..directory_name .."~w~ for your services."})
+						vRPclient.notify(target,{"~b~"..my_directory_name.."~w~ charged you ~r~$"..charge.."~w~ for his services."})
+					    --vRPbm.logInfoToFile("mchargeLog.txt",user_id .. " mobile charged "..target_id.." the amount of " .. charge .. ", user bank post-payment for "..user_id.." equals $"..my_bank.." and for "..user_id.." equals $"..target_bank)
+					    vRP.closeMenu({player})
+                      else
+                        vRPclient.notify(target,{lang.money.not_enough()})
+                        vRPclient.notify(player,{"~b~" .. directory_name .. "~w~ tried to, but~r~ can't~w~ pay for your services."})
+                      end
+				    else
+                      vRPclient.notify(player,{"~b~" .. directory_name .. "~r~ refused~w~ to pay for your services."})
+				    end
+				  end})
+				end})
+			  else
+			    vRPclient.notify(player,{"~r~You can't make charges to offline players."})
+			  end
+			else
+			  vRPclient.notify(player,{"~r~Your charge has to have a value."})
+			end
+		else
+		  vRPclient.notify(player,{"~r~That phone number seems invalid."})
+		end
+	  end})
+	else
+	  vRPclient.notify(player,{"~r~The value has to be bigger than 0."})
+	end
+  end})
+end
+
 function vRPbm.payPhoneNumber(user_id,phone)
   local player = vRP.getUserSource({user_id})
   local directory_name = vRP.getPhoneDirectoryName({user_id, phone})
@@ -748,6 +803,36 @@ local ch_mobilepay = {function(player,choice)
 	end
 	vRP.openMenu({player, menu})
 end,"Transfer money trough phone."}
+
+-- mobilecharge
+local ch_mobilecharge = {function(player,choice) 
+	local user_id = vRP.getUserId({player})
+	local menu = {}
+	menu.name = lang.phone.directory.title()
+	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
+    menu.onclose = function(player) vRP.openMainMenu({player}) end -- nest menu
+	menu[">Type Number"] = {
+	  -- payment function
+	  function(player,choice) 
+	    vRP.prompt({player,"Phone Number:","000-0000",function(player,phone)
+	      if phone ~= nil and phone ~= "" then 
+		    vRPbm.chargePhoneNumber(user_id,phone)
+		  else
+		    vRPclient.notify(player,{"~r~You have to digit a phone number."})
+		  end
+	    end})
+	  end,"Type the phone number manually."}
+	local directory = vRP.getPhoneDirectory({user_id})
+	for k,v in pairs(directory) do
+	  menu[k] = {
+	    -- payment function
+	    function(player,choice) 
+		  vRPbm.chargePhoneNumber(user_id,v)
+	    end
+	  ,v} -- number as description
+	end
+	vRP.openMenu({player, menu})
+end,"Charge money trough phone."}
 
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
@@ -909,7 +994,8 @@ end})
 vRP.registerMenuBuilder({"phone", function(add) -- phone menu is created on server start, so it has no permissions.
     local choices = {} -- Comment the choices you want to disable by adding -- in front of them.
 	
-    choices["MobilePay"] = ch_mobilepay -- transfer money through phone
+    choices["MPay"] = ch_mobilepay -- transfer money through phone
+    choices["MCharge"] = ch_mobilecharge -- charge money through phone
 	
     add(choices)
 end})
