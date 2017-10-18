@@ -849,7 +849,7 @@ end,"Spawn a vehicle model."}
 
 -- lockpick vehicle
 local ch_lockpickveh = {function(player,choice) 
-	BMclient.lockpickVehicle(player,{20}) -- 20s to lockpick
+	BMclient.lockpickVehicle(player,{20,false}) -- 20s to lockpick, allow to carjack unlocked vehicles (NoCarJack Compatibility)
 end,"Lockpick closest vehicle."}
 
 
@@ -862,7 +862,7 @@ function(args)
     local user_id = vRP.getUserId({player})
     if user_id ~= nil then
       if vRP.tryGetInventoryItem({user_id, "lockpicking_kit", 1, true}) then
-		BMclient.lockpickVehicle(player,{20}) -- 20s to lockpick
+		BMclient.lockpickVehicle(player,{20,false}) -- 20s to lockpick, allow to carjack unlocked vehicles (NoCarJack Compatibility)
         vRP.closeMenu({player})
       end
     end

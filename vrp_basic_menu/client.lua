@@ -17,20 +17,21 @@ function vRPbm.loadFreeze(freeze)
 	end
 end
 
-function vRPbm.lockpickVehicle(wait)
+function vRPbm.lockpickVehicle(wait,any)
 	Citizen.CreateThread(function()
 		local pos = GetEntityCoords(GetPlayerPed(-1))
 		local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 20.0, 0.0)
 
 		local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, GetPlayerPed(-1), 0)
 		local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
-		if(DoesEntityExist(vehicleHandle)) then
-		  if GetVehicleDoorsLockedForPlayer(vehicleHandle,PlayerId()) then
+		if DoesEntityExist(vehicleHandle) then
+		  if GetVehicleDoorsLockedForPlayer(vehicleHandle,PlayerId()) or any then
 			local prevObj = GetClosestObjectOfType(pos.x, pos.y, pos.z, 10.0, GetHashKey("prop_weld_torch"), false, true, true)
 			if(IsEntityAnObject(prevObj)) then
 				SetEntityAsMissionEntity(prevObj)
 				DeleteObject(prevObj)
 			end
+			StartVehicleAlarm(vehicleHandle)
 			TaskStartScenarioInPlace(GetPlayerPed(-1), "WORLD_HUMAN_WELDING", 0, true)
 			Citizen.Wait(wait*1000)
 			SetVehicleDoorsLocked(vehicleHandle, 1)
