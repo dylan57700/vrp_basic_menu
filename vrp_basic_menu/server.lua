@@ -852,6 +852,26 @@ local ch_lockpickveh = {function(player,choice)
 	BMclient.lockpickVehicle(player,{20}) -- 20s to lockpick
 end,"Lockpick closest vehicle."}
 
+
+-- lockpicking item
+vRP.defInventoryItem({"lockpicking_kit","Lockpicking Kit","", -- add it for sale to vrp/cfg/markets.lua if you want to use it
+function(args)
+  local choices = {}
+
+  choices["Lockpick"] = {function(player,choice)
+    local user_id = vRP.getUserId({player})
+    if user_id ~= nil then
+      if vRP.tryGetInventoryItem({user_id, "lockpicking_kit", 1, true}) then
+		BMclient.lockpickVehicle(player,{20}) -- 20s to lockpick
+        vRP.closeMenu({player})
+      end
+    end
+  end,"Lockpick closest vehicle."}
+
+  return choices
+end,
+5.00})
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
