@@ -834,6 +834,17 @@ local ch_mobilecharge = {function(player,choice)
 	vRP.openMenu({player, menu})
 end,"Charge money trough phone."}
 
+-- spawn vehicle
+local ch_spawnveh = {function(player,choice) 
+	vRP.prompt({player,"Vehicle Model:","",function(player,model)
+	  if model ~= nil and model ~= "" then 
+	    BMclient.spawnVehicle(player,{model})
+	  else
+		vRPclient.notify(player,{"~r~You have to type a vehicle model."})
+	  end
+	end})
+end,"Spawn a vehicle model."}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -913,6 +924,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
 	
 	if vRP.hasPermission({user_id,"admin.deleteveh"}) then
       choices["@DeleteVeh"] = ch_deleteveh -- Delete nearest vehicle (Fixed pull request https://github.com/Sighmir/vrp_basic_menu/pull/11/files/419405349ca0ad2a215df90cfcf656e7aa0f5e9c from benjatw)
+	end
+	
+	if vRP.hasPermission({user_id,"admin.spawnveh"}) then
+      choices["@SpawnVeh"] = ch_spawnveh -- Spawn a vehicle model
 	end
 	
 	if vRP.hasPermission({user_id,"admin.godmode"}) then

@@ -14,6 +14,35 @@ function vRPbm.loadFreeze(freeze)
 	end
 end
 
+function vRPbm.spawnVehicle(model) 
+    -- load vehicle model
+    local i = 0
+    local mhash = GetHashKey(model)
+    while not HasModelLoaded(mhash) and i < 1000 do
+	  if math.fmod(i,100) == 0 then
+	    vRP.notify({"~b~Loading vehicle model."})
+	  end
+      RequestModel(mhash)
+      Citizen.Wait(30)
+	  i = i + 1
+    end
+
+    -- spawn car if model is loaded
+    if HasModelLoaded(mhash) then
+      local x,y,z = vRP.getPosition({})
+      local nveh = CreateVehicle(mhash, x,y,z+0.5, GetEntityHeading(GetPlayerPed(-1)), true, false) -- added player heading
+      SetVehicleOnGroundProperly(nveh)
+      SetEntityInvincible(nveh,false)
+      SetPedIntoVehicle(GetPlayerPed(-1),nveh,-1) -- put player inside
+      Citizen.InvokeNative(0xAD738C3085FE7E11, nveh, true, true) -- set as mission entity
+      SetVehicleHasBeenOwnedByPlayer(nveh,true)
+      SetModelAsNoLongerNeeded(mhash)
+	  vRP.notify({"~g~Vehicle spawned."})
+	else
+	  vRP.notify({"~r~Vehicle model invalid."})
+	end
+end
+
 function vRPbm.getArmour()
   return GetPedArmour(GetPlayerPed(-1))
 end
