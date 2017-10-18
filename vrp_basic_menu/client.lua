@@ -1,6 +1,9 @@
 --bind client tunnel interface
 vRPbm = {}
 Tunnel.bindInterface("vRP_basic_menu",vRPbm)
+vRPserver = Tunnel.getInterface("vRP","vRP_basic_menu")
+HKserver = Tunnel.getInterface("vrp_hotkeys","vRP_basic_menu")
+BMserver = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
 vRP = Proxy.getInterface("vRP")
 
 local frozen = false
@@ -12,6 +15,43 @@ function vRPbm.loadFreeze(freeze)
 	else
 	  unfrozen = true
 	end
+end
+
+function vRPbm.lockpickVehicle(wait)
+	Citizen.CreateThread(function()
+		local pos = GetEntityCoords(GetPlayerPed(-1))
+		local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 20.0, 0.0)
+
+		local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, GetPlayerPed(-1), 0)
+		local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
+		if(DoesEntityExist(vehicleHandle)) then
+		  if GetVehicleDoorsLockedForPlayer(vehicleHandle,PlayerId()) then
+			local prevObj = GetClosestObjectOfType(pos.x, pos.y, pos.z, 10.0, GetHashKey("prop_weld_torch"), false, true, true)
+			if(IsEntityAnObject(prevObj)) then
+				SetEntityAsMissionEntity(prevObj)
+				DeleteObject(prevObj)
+			end
+			TaskStartScenarioInPlace(GetPlayerPed(-1), "WORLD_HUMAN_WELDING", 0, true)
+			Citizen.Wait(wait*1000)
+			SetVehicleDoorsLocked(vehicleHandle, 1)
+			for i = 1,64 do 
+				SetVehicleDoorsLockedForPlayer(vehicleHandle, GetPlayerFromServerId(i), false)
+			end 
+			ClearPedTasksImmediately(GetPlayerPed(-1))
+			
+			vRP.notify({"~g~Vehicle unlocked."})
+			
+			-- ties to the hotkey lock system
+			local plate = GetVehicleNumberPlateText(vehicleHandle)
+			HKserver.lockSystemUpdate({1, plate})
+			HKserver.playSoundWithinDistanceOfEntityForEveryone({vehicleHandle, 10, "unlock", 1.0})
+		  else
+			vRP.notify({"~g~Vehicle already unlocked."})
+		  end
+		else
+			vRP.notify({"~r~Too far away from vehicle."})
+		end
+	end)
 end
 
 function vRPbm.spawnVehicle(model) 

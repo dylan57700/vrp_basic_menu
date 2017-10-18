@@ -847,6 +847,11 @@ local ch_spawnveh = {function(player,choice)
 	end})
 end,"Spawn a vehicle model."}
 
+-- lockpick vehicle
+local ch_lockpickveh = {function(player,choice) 
+	BMclient.lockpickVehicle(player,{20}) -- 20s to lockpick
+end,"Lockpick closest vehicle."}
+
 -- ADD STATIC MENU CHOICES // STATIC MENUS NEED TO BE ADDED AT vRP/cfg/gui.lua
 vRP.addStaticMenuChoices({"police_weapons", police_weapons}) -- police gear
 vRP.addStaticMenuChoices({"emergency_medkit", emergency_medkit}) -- pills and medkits
@@ -912,6 +917,10 @@ vRP.registerMenuBuilder({"main", function(add, data)
 	
     if vRP.hasPermission({user_id,"hacker.hack"}) then
       choices["Hack"] = ch_hack --  1 in 100 chance of stealing 1% of nearest player bank
+    end
+	
+    if vRP.hasPermission({user_id,"carjacker.lockpick"}) then
+      choices["Lockpick"] = ch_lockpickveh -- opens a locked vehicle
     end
 	
     add(choices)
