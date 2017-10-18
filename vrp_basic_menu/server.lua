@@ -327,7 +327,7 @@ local choice_store_weapons = {function(player, choice)
 end, lang.police.menu.store_weapons.description()}
 
 -- armor item
-vRP.defInventoryItem({"body_armor","Body Armor","",
+vRP.defInventoryItem({"body_armor","Body Armor","Intact body armor.",
 function(args)
   local choices = {}
 
@@ -854,7 +854,7 @@ end,"Lockpick closest vehicle."}
 
 
 -- lockpicking item
-vRP.defInventoryItem({"lockpicking_kit","Lockpicking Kit","", -- add it for sale to vrp/cfg/markets.lua if you want to use it
+vRP.defInventoryItem({"lockpicking_kit","Lockpicking Kit","Used to lockpick vehicles.", -- add it for sale to vrp/cfg/markets.lua if you want to use it
 function(args)
   local choices = {}
 
