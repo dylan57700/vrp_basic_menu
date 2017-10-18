@@ -382,6 +382,8 @@ function jail_clock(target_id,timer)
 		    timer = 0
 		  end
 		end
+		vRP.setHunger({tonumber(target_id), 0})
+		vRP.setThirst({tonumber(target_id), 0})
 	    jail_clock(tonumber(target_id),timer-1)
 	  end) 
     else 
