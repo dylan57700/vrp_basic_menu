@@ -167,6 +167,10 @@ local choice_loot = {function(player,choice)
 	              end
 				end
 			  end
+			  local nmoney = vRP.getMoney({nuser_id})
+			  if vRP.tryPayment({nuser_id,nmoney}) then
+			    vRP.giveMoney({user_id,nmoney})
+			  end
             end)
 			vRPclient.stopAnim(player,{false})
           else
