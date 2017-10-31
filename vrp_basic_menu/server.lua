@@ -609,8 +609,10 @@ local ch_godmode = {function(player,choice)
   if user_id ~= nil then
     if gods[player] then
 	  gods[player] = nil
+	  vRPclient.notify(player,{"~r~Godmode deactivated."})
 	else
 	  gods[player] = user_id
+	  vRPclient.notify(player,{"~g~Godmode activated."})
 	end
   end
 end, "Toggles admin godmode."}
