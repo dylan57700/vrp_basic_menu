@@ -391,9 +391,9 @@ function jail_clock(target_id,timer)
 	    jail_clock(tonumber(target_id),timer-1)
 	  end) 
     else 
-	  BMclient.loadFreeze(target,{true})
+	  BMclient.loadFreeze(target,{false,true,true})
 	  SetTimeout(15000,function()
-		BMclient.loadFreeze(target,{false})
+		BMclient.loadFreeze(target,{false,false,false})
 	  end)
 	  vRPclient.teleport(target,{425.7607421875,-978.73425292969,30.709615707397}) -- teleport to outside jail
 	  vRPclient.setHandcuffed(target,{false})
@@ -426,9 +426,9 @@ local ch_jail = {function(player,choice)
 		  
                 vRPclient.isHandcuffed(target,{}, function(handcuffed)  
                   if handcuffed then 
-					BMclient.loadFreeze(target,{true})
+					BMclient.loadFreeze(target,{false,true,true})
 					SetTimeout(15000,function()
-					  BMclient.loadFreeze(target,{false})
+					  BMclient.loadFreeze(target,{false,false,false})
 					end)
 				    vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport to inside jail
 				    vRPclient.notify(target,{"~r~You have been sent to jail."})
@@ -500,9 +500,9 @@ AddEventHandler("vRP:playerSpawn", function(user_id, source, first_spawn)
 	    custom = json.decode(value)
 	    if custom ~= nil then
 		  if tonumber(custom) > 0 then
-			BMclient.loadFreeze(target,{true})
+			BMclient.loadFreeze(target,{false,true,true})
 			SetTimeout(15000,function()
-			  BMclient.loadFreeze(target,{false})
+			  BMclient.loadFreeze(target,{false,false,false})
 			end)
             vRPclient.setHandcuffed(target,{true})
             vRPclient.teleport(target,{1641.5477294922,2570.4819335938,45.564788818359}) -- teleport inside jail
@@ -858,6 +858,35 @@ local ch_lockpickveh = {function(player,choice)
 	BMclient.lockpickVehicle(player,{20,true}) -- 20s to lockpick, allow to carjack unlocked vehicles (has to be true for NoCarJack Compatibility)
 end,"Lockpick closest vehicle."}
 
+-- dynamic freeze
+local ch_freeze = {function(player,choice) 
+	local user_id = vRP.getUserId({player})
+	if vRP.hasPermission({user_id,"admin.bm_freeze"}) then
+	  vRP.prompt({player,"Player ID:","",function(player,target_id) 
+	    if target_id ~= nil and target_id ~= "" then 
+	      local target = vRP.getUserSource({tonumber(target_id)})
+		  if target ~= nil then
+		    vRPclient.notify(player,{"~g~You un/froze that player."})
+		    BMclient.loadFreeze(target,{true,true,true})
+		  else
+		    vRPclient.notify(player,{"~r~That ID seems invalid."})
+		  end
+        else
+          vRPclient.notify(player,{"~r~No player ID selected."})
+        end 
+	  end})
+	else
+	  vRPclient.getNearestPlayer(player,{10},function(nplayer)
+        local nuser_id = vRP.getUserId({nplayer})
+        if nuser_id ~= nil then
+		  vRPclient.notify(player,{"~g~You un/froze that player."})
+		  BMclient.loadFreeze(nplayer,{true,false,false})
+        else
+          vRPclient.notify(player,{lang.common.no_player_near()})
+        end
+      end)
+	end
+end,"Freezes a player."}
 
 -- lockpicking item
 vRP.defInventoryItem({"lockpicking_kit","Lockpicking Kit","Used to lockpick vehicles.", -- add it for sale to vrp/cfg/markets.lua if you want to use it
@@ -999,6 +1028,10 @@ vRP.registerMenuBuilder({"admin", function(add, data)
       choices["@Spikes"] = ch_spikes -- Toggle spikes
     end
 	
+	if vRP.hasPermission({user_id,"admin.bm_freeze"}) then
+      choices["@Freeze"] = ch_freeze -- Toggle freeze
+    end
+	
     add(choices)
   end
 end})
@@ -1035,6 +1068,10 @@ vRP.registerMenuBuilder({"police", function(add, data)
 	
     if vRP.hasPermission({user_id,"police.drag"}) then
       choices["Drag"] = ch_drag -- Drags closest handcuffed player
+    end
+	
+	if vRP.hasPermission({user_id,"police.bm_freeze"}) then
+      choices["Freeze"] = ch_freeze -- Toggle freeze
     end
 	
     add(choices)
