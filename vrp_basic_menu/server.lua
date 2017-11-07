@@ -312,9 +312,22 @@ local choice_player_check = {function(player,choice)
 end, lang.police.menu.check.description()}
 
 -- player store weapons
+local store_weapons_cd = {}
+function storeWeaponsCooldown()
+  for user_id,cd in pairs(store_weapons_cd) do
+    if cd > 0 then
+      store_weapons_cd[user_id] = cd - 1
+	end
+  end
+  SetTimeout(1000,function()
+	storeWeaponsCooldown()
+  end)
+end
+storeWeaponsCooldown()
 local choice_store_weapons = {function(player, choice)
   local user_id = vRP.getUserId({player})
-  if user_id ~= nil then
+  if (store_weapons_cd[user_id] == nil or store_weapons_cd[user_id] == 0) and user_id ~= nil then
+    store_weapons_cd[user_id] = 5
     vRPclient.getWeapons(player,{},function(weapons)
       for k,v in pairs(weapons) do
         -- convert weapons to parametric weapon items
@@ -323,10 +336,11 @@ local choice_store_weapons = {function(player, choice)
           vRP.giveInventoryItem({user_id, "wammo|"..k, v.ammo, true})
         end
       end
-
       -- clear all weapons
       vRPclient.giveWeapons(player,{{},true})
     end)
+  else
+    vRPclient.notify(player,{"~r~You are already storing your weapons."})
   end
 end, lang.police.menu.store_weapons.description()}
 
