@@ -1,11 +1,10 @@
 function vRPbm.chargePhoneNumber(user_id,phone)
-Citizen.CreateThread(function()
   local player = vRP.getUserSource(user_id)
   local directory_name = vRP.getPhoneDirectoryName(user_id, phone)
   if directory_name == "unknown" then
 	directory_name = phone
   end
-  vRP.prompt(player,lang.mcharge.prompt({directory_name}),"",function(player,charge)
+  local charged = vRP.prompt(player,lang.mcharge.prompt({directory_name}),"")
 	if charge ~= nil and charge ~= "" and tonumber(charge)>0 then 
 	  local target_id = vRP.getUserByPhone(phone)
 		if target_id~=nil then
@@ -17,7 +16,7 @@ Citizen.CreateThread(function()
 				  if my_directory_name == "unknown" then
 				    my_directory_name = identity.phone
 				  end
-				  vRP.request(target,lang.mcharge.request({my_directory_name,charge}),600,function(req_player,ok)
+				  local ok = vRP.request(target,lang.mcharge.request({my_directory_name,charge}),600)
 				    if ok then
 					  local target_bank = vRP.getBankMoney(target_id) - tonumber(charge)
 					  local my_bank = vRP.getBankMoney(user_id) + tonumber(charge)
@@ -35,7 +34,6 @@ Citizen.CreateThread(function()
 				    else
                       vRPclient.notify(player,lang.mcharge.refused({directory_name}))
 				    end
-				  end)
 			  else
 				vRPclient.notify(player,lang.common.invalid_value())
 			  end
@@ -48,18 +46,15 @@ Citizen.CreateThread(function()
 	else
       vRPclient.notify(player,lang.common.invalid_value())
 	end
-  end)
-end)
 end
 
 function vRPbm.payPhoneNumber(user_id,phone)
-Citizen.CreateThread(function()
   local player = vRP.getUserSource(user_id)
   local directory_name = vRP.getPhoneDirectoryName(user_id, phone)
   if directory_name == "unknown" then
 	directory_name = phone
   end
-  vRP.prompt(player,lang.mpay.prompt({directory_name}),"",function(player,transfer)
+  local transfer = vRP.prompt(player,lang.mpay.prompt({directory_name}),"")
 	if transfer ~= nil and transfer ~= "" and tonumber(transfer)>0 then 
 	  local target_id = vRP.getUserByPhone(phone)
 	    local my_bank = vRP.getBankMoney(user_id) - tonumber(transfer)
@@ -91,6 +86,4 @@ Citizen.CreateThread(function()
 	else
 	  vRPclient.notify(player,lang.common.invalid_value())
 	end
-  end)
-end)
 end

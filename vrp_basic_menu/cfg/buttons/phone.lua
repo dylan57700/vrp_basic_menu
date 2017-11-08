@@ -1,6 +1,5 @@
 -- mobilepay
 ch_mobilepay = {function(player,choice)
-  Citizen.CreateThread(function() 
 	local user_id = vRP.getUserId(player)
 	local menu = {}
 	menu.name = lang.phone.directory.title()
@@ -9,13 +8,12 @@ ch_mobilepay = {function(player,choice)
 	menu[lang.mpay.type.button()] = {
 	  -- payment function
 	  function(player,choice) 
-	    vRP.prompt(player,lang.mpay.type.prompt,"",function(player,phone)
+	    local phone = vRP.prompt(player,lang.mpay.type.prompt,"")
 	      if phone ~= nil and phone ~= "" then 
 		    vRPbm.payPhoneNumber(user_id,phone)
 		  else
 			vRPclient.notify(player,lang.common.invalid_value())
 		  end
-	    end)
 	  end,lang.mpay.type.desc()}
 	local directory = vRP.getPhoneDirectory(user_id)
 	for k,v in pairs(directory) do
@@ -26,13 +24,11 @@ ch_mobilepay = {function(player,choice)
 	    end
 	  ,v} -- number as description
 	end
-	vRP.openMenu({player, menu})
-  end)
+	vRP.openMenu(player, menu)
 end,lang.mpay.desc()}
 
 -- mobilecharge
 ch_mobilecharge = {function(player,choice) 
-  Citizen.CreateThread(function() 
 	local user_id = vRP.getUserId(player)
 	local menu = {}
 	menu.name = lang.phone.directory.title()
@@ -41,13 +37,12 @@ ch_mobilecharge = {function(player,choice)
 	menu[lang.mcharge.type.button()] = {
 	  -- payment function
 	  function(player,choice) 
-	    vRP.prompt(player,lang.mcharge.type.prompt(),"",function(player,phone)
+	    local phone = vRP.prompt(player,lang.mcharge.type.prompt(),"")
 	      if phone ~= nil and phone ~= "" then 
 		    vRPbm.chargePhoneNumber(user_id,phone)
 		  else
 			vRPclient.notify(player,lang.common.invalid_value())
 		  end
-	    end)
 	  end,lang.mcharge.type.desc()}
 	local directory = vRP.getPhoneDirectory(user_id)
 	for k,v in pairs(directory) do
@@ -59,5 +54,4 @@ ch_mobilecharge = {function(player,choice)
 	  ,v} -- number as description
 	end
 	vRP.openMenu(player, menu)
-  end)
 end,lang.mcharge.desc()}

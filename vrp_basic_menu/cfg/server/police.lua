@@ -1,7 +1,6 @@
 
 unjailed = {}
 function jail_clock(target_id,timer)
-Citizen.CreateThread(function()
   local target = vRP.getUserSource(tonumber(target_id))
   local users = vRP.getUsers()
   local online = false
@@ -36,7 +35,6 @@ Citizen.CreateThread(function()
 	  vRP.setUData(tonumber(target_id),"vRP:jail:time",json.encode(-1))
     end
   end
-end)
 end
 
 -- (server) called when a logged player spawn to check for vRP:jail in user_data

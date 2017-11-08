@@ -1,5 +1,4 @@
 function vRPbm.lockpickVehicle(wait,any)
-	Citizen.CreateThread(function()
 		local pos = GetEntityCoords(GetPlayerPed(-1))
 		local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 20.0, 0.0)
 
@@ -21,18 +20,17 @@ function vRPbm.lockpickVehicle(wait,any)
 			end 
 			ClearPedTasksImmediately(GetPlayerPed(-1))
 			
-			vRP.notify(lang.lockpick.success())
+			vRP.notify("~g~Vehicle unlocked.") -- lang.lockpick.success()
 			
 			-- ties to the hotkey lock system
 			local plate = GetVehicleNumberPlateText(vehicleHandle)
 			HKserver.lockSystemUpdate({1, plate})
 			HKserver.playSoundWithinDistanceOfEntityForEveryone({vehicleHandle, 10, "unlock", 1.0})
 		  else
-			vRP.notify(lang.lockpick.unlocked())
+			vRP.notify("~g~Vehicle already unlocked.") -- lang.lockpick.unlocked()
 		  end
 		else
-			vRP.notify(lang.lockpick.toofar())
+			vRP.notify("~r~Too far away from vehicle.") -- lang.lockpick.toofar()
 		end
-	end)
 end
 

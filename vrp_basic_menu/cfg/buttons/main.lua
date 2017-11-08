@@ -1,7 +1,6 @@
 
 --toggle service
 choice_service = {function(player,choice)
-  Citizen.CreateThread(function() 
     local user_id = vRP.getUserId(player)
     local service = lang.service.group()
     if user_id ~= nil then
@@ -16,12 +15,10 @@ choice_service = {function(player,choice)
         vRPclient.notify(player,lang.service.on())
 	  end
     end
-  end)
 end, lang.service.desc()}
 
 --loot corpse
 choice_loot = {function(player,choice)
-  Citizen.CreateThread(function() 
     local user_id = vRP.getUserId(player)
     if user_id ~= nil then
       local nplayer = vRPclient.getNearestPlayer(player,10)
@@ -58,12 +55,10 @@ choice_loot = {function(player,choice)
         vRPclient.notify(player,lang.common.no_player_near())
       end
     end
-  end)
 end,lang.loot.desc()}
 
 -- hack player
-local ch_hack = {function(player,choice)
-  Citizen.CreateThread(function() 
+ch_hack = {function(player,choice)
   -- get nearest player
     local user_id = vRP.getUserId(player)
     if user_id ~= nil then
@@ -90,12 +85,10 @@ local ch_hack = {function(player,choice)
         vRPclient.notify(player,lang.common.no_player_near())
       end
     end
-  end)
 end,lang.hacker.desc()}
 
 -- mug player
-local ch_mug = {function(player,choice)
-  Citizen.CreateThread(function() 
+ch_mug = {function(player,choice)
     -- get nearest player
     local user_id = vRP.getUserId(player)
     if user_id ~= nil then
@@ -124,12 +117,9 @@ local ch_mug = {function(player,choice)
         vRPclient.notify(player,lang.common.no_player_near())
       end
     end
-  end)
 end, lang.mugger.desc()}
 
 -- lockpick vehicle
 ch_lockpickveh = {function(player,choice) 
-  Citizen.CreateThread(function() 
 	BMclient.lockpickVehicle(player,20,true) -- 20s to lockpick, allow to carjack unlocked vehicles (has to be true for NoCarJack Compatibility)
-  end)
 end,lang.lockpick.desc()}

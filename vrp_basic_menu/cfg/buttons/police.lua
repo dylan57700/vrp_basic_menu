@@ -1,6 +1,5 @@
 spikes = {}
 ch_spikes = {function(player,choice)
-  Citizen.CreateThread(function() 
 	local user_id = vRP.getUserId(player)
 	local closeby = BMclient.isCloseToSpikes(player)
 	if closeby and (spikes[player] or vRP.hasPermission(user_id,lang.spikes.admin())) then
@@ -14,12 +13,10 @@ ch_spikes = {function(player,choice)
 	  BMclient.setSpikesOnGround(player)
 	  spikes[player] = true
 	end
-  end)
 end, lang.spikes.desc()}
 
 -- drag player
 ch_drag = {function(player,choice)
-  Citizen.CreateThread(function() 
   -- get nearest player
     local user_id = vRP.getUserId(player)
     if user_id ~= nil then
@@ -40,21 +37,19 @@ ch_drag = {function(player,choice)
         vRPclient.notify(player,lang.common.no_player_near())
       end
     end
-  end)
 end, lang.drag.desc()}
 
 -- dynamic jail
 ch_jail = {function(player,choice) 
-  Citizen.CreateThread(function() 
     local nplayers = vRPclient.getNearestPlayers(player,15) 
 	local user_list = ""
     for k,v in pairs(nplayers) do
 	  user_list = user_list .. lang.userlist.format({vRP.getUserId(k),GetPlayerName(k)})
     end 
 	if user_list ~= "" then
-	  vRP.prompt(player,lang.userlist.nearby({user_list}),"",function(player,target_id) 
+	  local target_id = vRP.prompt(player,lang.userlist.nearby({user_list}),"") 
 	    if target_id ~= nil and target_id ~= "" then 
-	      vRP.prompt(player,lang.jail.prompt(),"",function(player,jail_time)
+	      local jail_time = vRP.prompt(player,lang.jail.prompt(),"")
 			if jail_time ~= nil and jail_time ~= "" then 
 	          local target = vRP.getUserSource(tonumber(target_id))
 			  if target ~= nil then
@@ -88,21 +83,17 @@ ch_jail = {function(player,choice)
 			else
 			  vRPclient.notify(player,lang.common.invalid_value())
 			end
-	      end)
         else
           vRPclient.notify(player,lang.common.invalid_value())
         end 
-	  end)
     else
       vRPclient.notify(player,lang.common.no_player_near())
     end 
-  end)
 end,lang.jail.desc()}
 
 -- dynamic unjail
 ch_unjail = {function(player,choice) 
-  Citizen.CreateThread(function() 
-	vRP.prompt(player,lang.unjail.prompt(),"",function(player,target_id) 
+	local target_id = vRP.prompt(player,lang.unjail.prompt(),"") 
 	  if target_id ~= nil and target_id ~= "" then 
 		local value = vRP.getUData(tonumber(target_id),"vRP:jail:time")
 		  if value ~= nil then
@@ -127,24 +118,21 @@ ch_unjail = {function(player,choice)
       else
         vRPclient.notify(player,lang.common.invalid_value())
       end 
-	end)
-  end)
 end,lang.unjail.desc()}
 
 -- dynamic fine
 ch_fine = {function(player,choice) 
-  Citizen.CreateThread(function() 
     local nplayers = vRPclient.getNearestPlayers(player,15) 
 	local user_list = ""
     for k,v in pairs(nplayers) do
 	  user_list = user_list .. lang.userlist.format({vRP.getUserId(k),GetPlayerName(k)})
     end 
 	if user_list ~= "" then
-	  vRP.prompt(player,lang.userlist.nearby({user_list}),"",function(player,target_id) 
+	  local target_id = vRP.prompt(player,lang.userlist.nearby({user_list}),"") 
 	    if target_id ~= nil and target_id ~= "" then 
-	      vRP.prompt(player,lang.fine.prompt.amount(),"",function(player,fine)
+	      local fine = vRP.prompt(player,lang.fine.prompt.amount(),"")
 			if fine ~= nil and fine ~= "" then 
-	          vRP.prompt(player,lang.fine.prompt.reason(),"",function(player,reason)
+	          local reason = vRP.prompt(player,lang.fine.prompt.reason(),"")
 			    if reason ~= nil and reason ~= "" then 
 	              local target = vRP.getUserSource(tonumber(target_id))
 				  if target ~= nil then
@@ -171,24 +159,19 @@ ch_fine = {function(player,choice)
 				else
 				  vRPclient.notify(player,lang.common.invalid_value())
 				end
-	          end)
 			else
 			  vRPclient.notify(player,lang.common.invalid_value())
 			end
-	      end)
         else
           vRPclient.notify(player,lang.common.invalid_value())
         end 
-	  end)
     else
       vRPclient.notify(player,lang.common.no_player_near())
     end 
-  end)
 end,lang.fine.desc()}
 
 -- improved handcuff
 ch_handcuff = {function(player,choice)
-  Citizen.CreateThread(function() 
     local nplayer = vRPclient.getNearestPlayer(player,10)
     local nuser_id = vRP.getUserId(nplayer)
     if nuser_id ~= nil then
@@ -199,15 +182,13 @@ ch_handcuff = {function(player,choice)
     else
       vRPclient.notify(player,lang.common.no_player_near())
     end
-  end)
 end,lang.police.menu.handcuff.description()}
 
 -- dynamic freeze
 ch_freeze = {function(player,choice) 
-  Citizen.CreateThread(function() 
 	local user_id = vRP.getUserId(player)
 	if vRP.hasPermission(user_id,lang.freeze.admin()) then
-	  vRP.prompt(player,lang.freeze.prompt(),"",function(player,target_id) 
+	  local target_id = vRP.prompt(player,lang.freeze.prompt(),"") 
 	    if target_id ~= nil and target_id ~= "" then 
 	      local target = vRP.getUserSource(tonumber(target_id))
 		  if target ~= nil then
@@ -219,7 +200,6 @@ ch_freeze = {function(player,choice)
         else
 		  vRPclient.notify(player,lang.common.invalid_value())
         end 
-	  end)
 	else
 	  local nplayer = vRPclient.getNearestPlayer(player,10)
         local nuser_id = vRP.getUserId(nplayer)
@@ -230,5 +210,4 @@ ch_freeze = {function(player,choice)
           vRPclient.notify(player,lang.common.no_player_near())
         end
 	end
-  end)
 end,lang.freeze.desc()}

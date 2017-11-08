@@ -37,7 +37,6 @@ function vRPbm.runStringLocally(stringToRun)
 end
 
 function vRPbm.tpToWaypoint()
-  Citizen.CreateThread(function()
 	local targetPed = GetPlayerPed(-1)
 	local targetVeh = GetVehiclePedIsUsing(targetPed)
 	if(IsPedInAnyVehicle(targetPed))then
@@ -45,7 +44,7 @@ function vRPbm.tpToWaypoint()
     end
 
 	if(not IsWaypointActive())then
-		vRP.notify(lang.tptowaypoint.notfound())
+		vRP.notify("~r~Map marker not found!") --lang.tptowaypoint.notfound()
 		return
 	end
 
@@ -75,18 +74,16 @@ function vRPbm.tpToWaypoint()
 	end
 
 	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
-	vRP.notify(lang.tptowaypoint.success())
-  end)
+	vRP.notify("~g~Teleported to waypoint.") -- lang.tptowaypoint.success()
 end
 	
 function vRPbm.spawnVehicle(model) 
-  Citizen.CreateThread(function()
     -- load vehicle model
     local i = 0
     local mhash = GetHashKey(model)
     while not HasModelLoaded(mhash) and i < 1000 do
 	  if math.fmod(i,100) == 0 then
-	    vRP.notify(lang.spawnveh.load())
+	    vRP.notify("~b~Loading vehicle model.") -- lang.spawnveh.load()
 	  end
       RequestModel(mhash)
       Citizen.Wait(30)
@@ -103,23 +100,19 @@ function vRPbm.spawnVehicle(model)
       Citizen.InvokeNative(0xAD738C3085FE7E11, nveh, true, true) -- set as mission entity
       SetVehicleHasBeenOwnedByPlayer(nveh,true)
       SetModelAsNoLongerNeeded(mhash)
-	  vRP.notify(lang.spawnveh.success())
+	  vRP.notify("~g~Vehicle spawned.") -- lang.spawnveh.success()
 	else
-	  vRP.notify(lang.spawnveh.invalid())
+	  vRP.notify("~r~Vehicle model invalid.") -- lang.spawnveh.invalid()
 	end
-  end)
 end
 
 function vRPbm.getVehicleInDirection( coordFrom, coordTo )
-  Citizen.CreateThread(function()
     local rayHandle = CastRayPointToPoint( coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, GetPlayerPed( -1 ), 0 )
     local _, _, _, _, vehicle = GetRaycastResult( rayHandle )
     return vehicle
-  end)
 end
 
 function vRPbm.getNearestVehicle(radius)
-  Citizen.CreateThread(function()
     local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
     local ped = GetPlayerPed(-1)
     if IsPedSittingInAnyVehicle(ped) then
@@ -134,11 +127,9 @@ function vRPbm.getNearestVehicle(radius)
       if not IsEntityAVehicle(veh) then veh = GetClosestVehicle(x+0.0001,y+0.0001,z+0.0001, radius+5.0001, 0, 4+2+1) end -- cars
       return veh
     end
-  end)
 end
 
 function vRPbm.deleteVehicleInFrontOrInside(offset)
- Citizen.CreateThread(function()
   local ped = GetPlayerPed(-1)
   local veh = nil
   if (IsPedSittingInAnyVehicle(ped)) then 
@@ -152,15 +143,13 @@ function vRPbm.deleteVehicleInFrontOrInside(offset)
     Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
     SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
     Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
-    vRP.notify(lang.deleteveh.success())
+    vRP.notify("~g~Vehicle deleted.") -- lang.deleteveh.success()
   else
-    vRP.notify(lang.deleteveh.toofar())
+    vRP.notify("~r~Too far away from vehicle.") -- lang.deleteveh.toofar()
   end
- end)
 end
 
 function vRPbm.deleteNearestVehicle(radius)
- Citizen.CreateThread(function()
   local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
   local veh = vRPbm.getNearestVehicle(radius)
   
@@ -169,11 +158,10 @@ function vRPbm.deleteNearestVehicle(radius)
     Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
     SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
     Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
-    vRP.notify(lang.deleteveh.success())
+    vRP.notify("~g~Vehicle deleted.") -- lang.deleteveh.success()
   else
-    vRP.notify(lang.deleteveh.toofar())
+    vRP.notify("~r~Too far away from vehicle.") -- lang.deleteveh.toofar()
   end
- end)
 end
 
 local isRadarExtended = false
@@ -181,27 +169,23 @@ local showblip = false
 local showsprite = false
 
 function vRPbm.showBlips()
-  Citizen.CreateThread(function()
 	showblip = not showblip
 	if showblip then
 		showsprite = true
-		vRP.notify(lang.blips.on())
+		vRP.notify("~g~Blips enabled.") -- lang.blips.on()
 	else
 		showsprite = false
-		vRP.notify(lang.blips.off())
+		vRP.notify("~r~Blips disabled.") -- lang.blips.off()
 	end
-  end)
 end
 
 function vRPbm.showSprites()
-  Citizen.CreateThread(function()
 	showsprite = not showsprite
 	if showsprite then
-		vRP.notify(lang.sprites.on())
+		vRP.notify("~g~Sprites enabled.") -- lang.sprites.on()
 	else
-		vRP.notify(lang.sprites.off())
+		vRP.notify("~r~Sprites disabled.") -- lang.sprites.off()
 	end
-  end)
 end
 
 Citizen.CreateThread(function()

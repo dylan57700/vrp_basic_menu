@@ -1,12 +1,9 @@
 
 function vRPbm.getArmour()
-  Citizen.CreateThread(function()
     return GetPedArmour(GetPlayerPed(-1))
-  end)
 end
 
 function vRPbm.setArmour(armour,vest)
-  Citizen.CreateThread(function()
     local player = GetPlayerPed(-1)
     if vest then
 	  if(GetEntityModel(player) == GetHashKey("mp_m_freemode_01")) then
@@ -19,7 +16,6 @@ function vRPbm.setArmour(armour,vest)
     end
     local n = math.floor(armour)
     SetPedArmour(player,n)
-  end)
 end
 
 local state_ready = false

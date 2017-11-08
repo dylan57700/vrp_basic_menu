@@ -38,7 +38,6 @@ end, lang.money.store.desc()}
 
 -- player check
 choice_player_check = {function(player,choice)
-  Citizen.CreateThread(function() 
     local nplayer = vRPclient.getNearestPlayer(player,5)
     local nuser_id = vRP.getUserId(nplayer)
     if nuser_id ~= nil then
@@ -64,18 +63,15 @@ choice_player_check = {function(player,choice)
 
         vRPclient.setDiv(player,"police_check",".div_police_check{ background-color: rgba(0,0,0,0.75); color: white; font-weight: bold; width: 500px; padding: 10px; margin: auto; margin-top: 150px; }",lang.police.menu.check.info({money,items,weapons_info}))
         -- request to hide div
-        vRP.request(player, lang.police.menu.check.request_hide(), 1000, function(player,ok)
-          vRPclient.removeDiv(player,"police_check")
-        end)
+        local ok = vRP.request(player, lang.police.menu.check.request_hide(), 1000)
+        vRPclient.removeDiv(player,"police_check")
     else
       vRPclient.notify(player,lang.common.no_player_near())
     end
-  end)
 end, lang.inspect.desc()}
 
 -- player store weapons
 choice_store_weapons = {function(player, choice)
-  Citizen.CreateThread(function() 
     local user_id = vRP.getUserId(player)
     if user_id ~= nil then
       local weapons = vRPclient.getWeapons(player)
@@ -90,12 +86,10 @@ choice_store_weapons = {function(player, choice)
       -- clear all weapons
       vRPclient.giveWeapons(player,{},true)
     end
-  end)
 end, lang.weapons.store.desc()}
 
 player_lists = {}
 ch_userlist = {function(player,choice)
- Citizen.CreateThread(function() 
   local user_id = vRP.getUserId(player)
   if user_id ~= nil then
     if player_lists[player] then -- hide
@@ -158,5 +152,4 @@ ch_userlist = {function(player,choice)
       end
     end
   end
- end)
 end, lang.userlist.desc()}

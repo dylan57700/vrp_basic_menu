@@ -1,8 +1,8 @@
+-- TO USE THIS FUNCTION YOU NEED TO HAVE THE ORIGINAL vRP UPDATED TO THE LASTEST VERSION
 Citizen.CreateThread(function()
 
 
 
--- TO USE THIS FUNCTION YOU NEED TO HAVE THE ORIGINAL vRP UPDATED TO THE LASTEST VERSION
 vRP.registerMenuBuilder("phone", function(add) -- phone menu is created on server start, so it has no permissions.
     local choices = {} -- Comment the choices you want to disable by adding -- in front of them.
 	

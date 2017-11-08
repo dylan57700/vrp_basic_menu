@@ -1,3 +1,4 @@
+
 Citizen.CreateThread(function()
 
 
@@ -38,6 +39,7 @@ vRP.registerMenuBuilder("police", function(add, data)
     add(choices)
   end
 end)
+
 
 
 end)

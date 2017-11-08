@@ -9,7 +9,6 @@ BMclient = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
 vRPbsC = Tunnel.getInterface("vRP_barbershop","vRP_basic_menu")
 Tunnel.bindInterface("vrp_basic_menu",vRPbm)
 lcfg = module("vrp", "cfg/base")
-
 -- load global and local languages
 Luang = module("vrp", "lib/Luang")
 Lang = Luang()

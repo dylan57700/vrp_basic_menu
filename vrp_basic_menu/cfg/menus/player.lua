@@ -1,7 +1,3 @@
-Citizen.CreateThread(function()
-
-
-
 ch_player_menu = {function(player,choice)
 	local user_id = vRP.getUserId(player)
 	local menu = {}
@@ -35,6 +31,3 @@ ch_player_menu = {function(player,choice)
 	
 	vRP.openMenu(player, menu)
 end, lang.player.menu.desc()}
-
-
-end)

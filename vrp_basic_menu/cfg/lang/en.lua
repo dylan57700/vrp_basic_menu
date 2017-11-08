@@ -1,10 +1,13 @@
+-- Some messages might not work because I thought Luang worked client-side
+-- I still think it might work in the future so I will just comment those messages for now
+-- These commented messages can be changed on the files inside the cfg/client folder
 local lang = {
 	blips = {
 		button = "@Blips",
 		perm = "admin.blips",
 		desc = "Toggle blips.",
-		on = "~g~Blips enabled.",
-		off = "~r~Blips disabled.",
+		--on = "~g~Blips enabled.",
+		--off = "~r~Blips disabled.",
 	},
 	bodyarmor = {
 		id = "body_armor",
@@ -35,8 +38,8 @@ local lang = {
 		button = "@Delete Vehicle",
 		perm = "admin.deleteveh",
 		desc = "Delete a vehicle.",
-		success = "~g~Vehicle deleted.",
-		toofar = "~r~Too far away from vehicle.",
+		--success = "~g~Vehicle deleted.",
+		--toofar = "~r~Too far away from vehicle.",
 	},
 	drag = {
 		button = "Drag",
@@ -76,8 +79,8 @@ local lang = {
 		admin = "freeze.admin",
 		prompt = "User ID:",
 		notify = "~g~Player un/frozen.",
-		frozen = "~r~You've been frozen.",
-		unfrozen = "~g~You've been unfrozen.",
+		--frozen = "~r~You've been frozen.",
+		--unfrozen = "~g~You've been unfrozen.",
 	},
 	godmode = {
 		button = "@Godmode",
@@ -105,6 +108,10 @@ local lang = {
 		button = "Jail",
 		perm = "police.bmjail",
 		desc = "Jails a nearby cuffed player.",
+		free = "~b~You've been set free.",
+		resent = "~r~Finish your sentence.",
+		rejailer = "Logging In/Out",
+		timer = "Time remaining: {1} minute(s).",
 		prompt = "Sentence Time:",
 		file = "jail.log",
 		log = "{1} sent {2} to jail for {3}",
@@ -179,9 +186,9 @@ local lang = {
 		perm = "admin.spawnveh",
 		desc = "Spawn a vehicle.",
 		prompt = "Vehicle Model:",
-		load = "~b~Loading vehicle model.",
-		success = "~g~Vehicle spawned.",
-		invalid = "~r~Vehicle model invalid.",
+		--load = "~b~Loading vehicle model.",
+		--success = "~g~Vehicle spawned.",
+		--invalid = "~r~Vehicle model invalid.",
 	},
 	spikes = { 
 		button = "Spikes",
@@ -195,8 +202,8 @@ local lang = {
 		button = "@Sprites",
 		perm = "admin.sprites",
 		desc = "Toggle sprites.",
-		on = "~g~Sprites enabled.",
-		off = "~r~Sprites disabled.",
+		--on = "~g~Sprites enabled.",
+		--off = "~r~Sprites disabled.",
 	},
 	srun = {
 		button = "@Srun",
@@ -208,8 +215,8 @@ local lang = {
 		button = "@TpToWaypoint",
 		perm = "admin.tptowaypoint",
 		desc = "Teleport to the purple waypoint.",
-		notfound = "~r~Map marker not found!",
-		success = "~g~Teleported to waypoint.",
+		--notfound = "~r~Map marker not found!",
+		--success = "~g~Teleported to waypoint.",
 	},
 	unjail = {
 		button = "Unjail",

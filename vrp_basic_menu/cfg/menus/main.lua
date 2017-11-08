@@ -1,3 +1,4 @@
+
 Citizen.CreateThread(function()
 
 
@@ -34,6 +35,7 @@ vRP.registerMenuBuilder("main", function(add, data)
     add(choices)
   end
 end)
+
 
 
 end)
