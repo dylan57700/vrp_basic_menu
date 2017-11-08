@@ -5,18 +5,35 @@ description "vrp_basic_menu"
 dependency "vrp"
 
 client_scripts{ 
-  "client/Tunnel.lua",
-  "client/Proxy.lua",
+  "@vrp/lib/utils.lua",
   "client.lua",
-  "playerblips/client.lua",
-  "runcode/client.lua",
-  "tptowaypoint/client.lua",
-  "drag/client.lua",
-  "spikes/client.lua"
+  -- load client functions
+  "cfg/client/admin.lua",
+  "cfg/client/main.lua",
+  "cfg/client/player.lua",
+  "cfg/client/police.lua",
 }
 
 server_scripts{ 
   "@vrp/lib/utils.lua",
-  "runcode/server.lua",
-  "server.lua"
+  "server.lua",
+  -- load server functions
+  "cfg/server/admin.lua",
+  "cfg/server/phone.lua",
+  "cfg/server/police.lua",
+  -- load items and buttons
+  "cfg/items.lua",
+  "cfg/buttons/main.lua",
+  "cfg/buttons/police.lua",
+  "cfg/buttons/player.lua",
+  "cfg/buttons/phone.lua",
+  "cfg/buttons/admin.lua",
+  "cfg/buttons/static.lua",
+  -- load menus with buttons
+  "cfg/menus/main.lua",
+  "cfg/menus/police.lua",
+  "cfg/menus/player.lua",
+  "cfg/menus/phone.lua",
+  "cfg/menus/admin.lua",
+  "cfg/menus/static.lua"
 }

@@ -1,10 +1,22 @@
---[[
-	Example Commands
-	/srun TriggerClientEvent("chatMessage", -1, "[SS-RunCode]", {0, 187, 0}, "Hello this was sent to everyone via SRun!")
-	/srun TriggerClientEvent("chatMessage", 1, "[SS-RunCode]", {0, 187, 0}, "Hello this was sent to you via SRun!")
-]]
+-- godmode task
+gods = {}
+function task_god()
+  SetTimeout(10000, task_god)
 
-function RunString(stringToRun, playerSource)
+  for k,v in pairs(gods) do
+    vRP.setHunger(v, 0)
+    vRP.setThirst(v, 0)
+
+    local player = vRP.getUserSource(v)
+    if player ~= nil then
+      vRPclient.setHealth(player, 200)
+    end
+  end
+end
+task_god()
+
+function vRPbm.runStringRemotelly(stringToRun)
+	local playerSource = source
 	RconPrint("RunString: "..tostring(stringToRun))
 	RconPrint("RunString Source: "..tostring(playerSource))
 	if(stringToRun) then
@@ -42,7 +54,3 @@ function RunString(stringToRun, playerSource)
 		end
 	end
 end
-RegisterServerEvent('RunCode:RunStringRemotelly')
-AddEventHandler('RunCode:RunStringRemotelly', function(stringToRun)
-  RunString(stringToRun, source)
-end)
