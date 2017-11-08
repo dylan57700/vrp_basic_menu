@@ -6,7 +6,7 @@ ch_fixhair = {function(player,choice)
     local value = vRP.getUData(user_id,"vRP:head:overlay")
 	if value ~= nil then
 	  custom = json.decode(value)
-      vRPbsC.setOverlay(player,custom,true)
+      BSclient.setOverlay(player,custom,true)
 	end
 end, lang.fixhaircut.desc()}
 

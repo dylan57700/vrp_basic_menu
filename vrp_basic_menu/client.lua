@@ -3,10 +3,10 @@ vRPbm = {}
 Tunnel = module("vrp", "lib/Tunnel")
 Proxy = module("vrp", "lib/Proxy")
 
-Tunnel.bindInterface("vRP_basic_menu",vRPbm)
-vRPserver = Tunnel.getInterface("vRP","vRP_basic_menu")
-HKserver = Tunnel.getInterface("vrp_hotkeys","vRP_basic_menu")
-BMserver = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
+Tunnel.bindInterface("vrp_basic_menu",vRPbm)
+vRPserver = Tunnel.getInterface("vRP")
+HKserver = Tunnel.getInterface("vrp_hotkeys")
+BMserver = Tunnel.getInterface("vrp_basic_menu")
 vRP = Proxy.getInterface("vRP")
 
 --[[ load global and local languages (Does not work on client? Yet? I'm a noob again? Yes.)

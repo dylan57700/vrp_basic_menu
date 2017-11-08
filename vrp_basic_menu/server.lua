@@ -4,9 +4,9 @@ htmlEntities = module("vrp", "lib/htmlEntities")
 
 vRPbm = {}
 vRP = Proxy.getInterface("vRP")
-vRPclient = Tunnel.getInterface("vRP","vRP_basic_menu")
-BMclient = Tunnel.getInterface("vRP_basic_menu","vRP_basic_menu")
-vRPbsC = Tunnel.getInterface("vRP_barbershop","vRP_basic_menu")
+vRPclient = Tunnel.getInterface("vRP")
+BMclient = Tunnel.getInterface("vrp_basic_menu")
+BSclient = Tunnel.getInterface("vrp_barbershop")
 Tunnel.bindInterface("vrp_basic_menu",vRPbm)
 lcfg = module("vrp", "cfg/base")
 -- load global and local languages
