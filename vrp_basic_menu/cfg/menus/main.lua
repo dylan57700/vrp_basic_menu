@@ -8,8 +8,8 @@ vRP.registerMenuBuilder("main", function(add, data)
   if user_id ~= nil then
     local choices = {}
 	
-    if vRP.hasPermission(user_id,lang.player.menu.perm()) then
-      choices[lang.player.menu.button()] = ch_player_menu -- opens player submenu
+    if vRP.hasPermission(user_id,lang.player.perm()) then
+      choices[lang.player.button()] = ch_player_menu -- opens player submenu
     end
 	
     if vRP.hasPermission(user_id,lang.service.perm()) then

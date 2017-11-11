@@ -1,7 +1,7 @@
 ch_player_menu = {function(player,choice)
 	local user_id = vRP.getUserId(player)
 	local menu = {}
-	menu.name = lang.player.menu.title()
+	menu.name = lang.player.title()
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
     menu.onclose = function(player) vRP.openMainMenu(player) end -- nest menu
 	
@@ -30,4 +30,4 @@ ch_player_menu = {function(player,choice)
     end
 	
 	vRP.openMenu(player, menu)
-end, lang.player.menu.desc()}
+end, lang.player.desc()}

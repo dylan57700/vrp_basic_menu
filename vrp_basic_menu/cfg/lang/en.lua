@@ -2,6 +2,12 @@
 -- I still think it might work in the future so I will just comment those messages for now
 -- These commented messages can be changed on the files inside the cfg/client folder
 local lang = {
+    player = {
+		title = "Player",
+        button = "Player",
+        perm = "player.menu",
+        desc = "Player menu.",
+    },
 	blips = {
 		button = "@Blips",
 		perm = "admin.blips",
