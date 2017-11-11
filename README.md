@@ -1,6 +1,9 @@
 # vrp_basic_menu
 fx-server only
 
+Support me and my scripts on Patreon:  
+[![Support me and my scripts on Patreon](http://i.imgur.com/dyePK6Q.png)](https://www.patreon.com/Sighmir)  
+
 The vrp_basic_menu is an interface for you to create menus and buttons with some example features included, and I'm always adding more, but the main purpose of it is for you to have a tool to create your own static menus and buttons without changing the source code of vRP.
 
 If you want to use one of the examples they are based on permissions. You can find those on the server.lua file like so: 
