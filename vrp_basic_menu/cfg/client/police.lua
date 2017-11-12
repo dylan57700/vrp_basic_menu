@@ -3,7 +3,7 @@ unfrozen = false
 function vRPbm.loadFreeze(notify,god,ghost)
 	if not frozen then
 	  if notify then
-	    vRP.notify("~r~You've been frozen.") -- lang.freeze.frozen()
+	    vRP.notify(lang.freeze.frozen) -- lang.freeze.frozen()
 	  end
 	  frozen = true
 	  invincible = god
@@ -11,7 +11,7 @@ function vRPbm.loadFreeze(notify,god,ghost)
 	  unfrozen = false
 	else
 	  if notify then
-	    vRP.notify("~g~You've been unfrozen.") -- lang.freeze.unfrozen()
+	    vRP.notify(lang.freeze.unfrozen) -- lang.freeze.unfrozen()
 	  end
 	  unfrozen = true
 	  invincible = false

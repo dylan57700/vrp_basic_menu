@@ -1,19 +1,11 @@
--- Some messages might not work because I thought Luang worked client-side
--- I still think it might work in the future so I will just comment those messages for now
--- These commented messages can be changed on the files inside the cfg/client folder
+
 local lang = {
-    player = {
-		title = "Player",
-        button = "Player",
-        perm = "player.menu",
-        desc = "Player menu.",
-    },
 	blips = {
 		button = "@Blips",
 		perm = "admin.blips",
 		desc = "Toggle blips.",
-		--on = "~g~Blips enabled.",
-		--off = "~r~Blips disabled.",
+		on = "~g~Blips enabled.",
+		off = "~r~Blips disabled.",
 	},
 	bodyarmor = {
 		id = "body_armor",
@@ -44,8 +36,8 @@ local lang = {
 		button = "@Delete Vehicle",
 		perm = "admin.deleteveh",
 		desc = "Delete a vehicle.",
-		--success = "~g~Vehicle deleted.",
-		--toofar = "~r~Too far away from vehicle.",
+		success = "~g~Vehicle deleted.",
+		toofar = "~r~Too far away from vehicle.",
 	},
 	drag = {
 		button = "Drag",
@@ -53,10 +45,10 @@ local lang = {
 		desc = "Drags nearby cuffed player.",
 	},
 	emergenc_heal = {
-		one = "Take",
+		first = "Take",
 	},
 	emergenc_medkit = {
-		one = "Take",
+		first = "Take",
 	},
 	fine = {
 		button = "Fine",
@@ -85,8 +77,8 @@ local lang = {
 		admin = "freeze.admin",
 		prompt = "User ID:",
 		notify = "~g~Player un/frozen.",
-		--frozen = "~r~You've been frozen.",
-		--unfrozen = "~g~You've been unfrozen.",
+		frozen = "~r~You've been frozen.",
+		unfrozen = "~g~You've been unfrozen.",
 	},
 	godmode = {
 		button = "@Godmode",
@@ -143,6 +135,14 @@ local lang = {
 		button = "Mobile Charge",
 		perm = "mobile.charge",
 		desc = "Charge payments with your phone.",
+		charger = "~g~You charged ~y~${2}~g~ of ~b~{1}.",
+		charged = "~g~You've been charged ~r~${2} of ~b~{1}.",
+		log = "{1} charged {2} => banks: {1}:{3} | {2}:{4}",
+		file = "mCharge.log",
+		prompt = "Value to charge {1}:",
+		request = "Accept payment of {2} to {1}?",
+		refused = "~b~{1} ~r~refused the charge.",
+		not_enough = "~b~{1} ~r~doesn't have enough money!",
 		type = {
 			desc = "Type phone manually.",
 			button = ">Type number",
@@ -160,6 +160,12 @@ local lang = {
 		button = "Mobile Pay",
 		perm = "mobile.pay",
 		desc = "Make payments with your phone.",
+		transferred = "~g~You transfered ~r~${1}~g~ to ~b~{2}.",
+		received = "~g~You've received ~y~${2} from ~b~{1}.",
+		log = "{1} transferred to {2} => banks: {1}:{3} | {2}:{4}",
+		file = "mPay.log",
+		prompt = "Value to pay {1}:",
+		not_enough = "~b~{1} ~r~doesn't have enough money!",
 		type = {
 			desc = "Type phone manually.",
 			button = ">Type number",
@@ -176,8 +182,13 @@ local lang = {
 			bad = "~r~Mugging attempt failed!",
 		},
 	},
+    player = {
+        button = "Player",
+        perm = "player.menu",
+        desc = "Player menu.",
+    },
 	police_weapons = {
-		one = "Equip",
+		first = "Equip",
 	},
 	service = {
 		button = "Service",
@@ -192,9 +203,9 @@ local lang = {
 		perm = "admin.spawnveh",
 		desc = "Spawn a vehicle.",
 		prompt = "Vehicle Model:",
-		--load = "~b~Loading vehicle model.",
-		--success = "~g~Vehicle spawned.",
-		--invalid = "~r~Vehicle model invalid.",
+		load = "~b~Loading vehicle model.",
+		success = "~g~Vehicle spawned.",
+		invalid = "~r~Vehicle model invalid.",
 	},
 	spikes = { 
 		button = "Spikes",
@@ -208,8 +219,8 @@ local lang = {
 		button = "@Sprites",
 		perm = "admin.sprites",
 		desc = "Toggle sprites.",
-		--on = "~g~Sprites enabled.",
-		--off = "~r~Sprites disabled.",
+		on = "~g~Sprites enabled.",
+		off = "~r~Sprites disabled.",
 	},
 	srun = {
 		button = "@Srun",
@@ -221,8 +232,8 @@ local lang = {
 		button = "@TpToWaypoint",
 		perm = "admin.tptowaypoint",
 		desc = "Teleport to the purple waypoint.",
-		--notfound = "~r~Map marker not found!",
-		--success = "~g~Teleported to waypoint.",
+		notfound = "~r~Map marker not found!",
+		success = "~g~Teleported to waypoint.",
 	},
 	unjail = {
 		button = "Unjail",

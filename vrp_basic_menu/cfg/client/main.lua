@@ -20,17 +20,17 @@ function vRPbm.lockpickVehicle(wait,any)
 			end 
 			ClearPedTasksImmediately(GetPlayerPed(-1))
 			
-			vRP.notify("~g~Vehicle unlocked.") -- lang.lockpick.success()
+			vRP.notify(lang.lockpick.success) -- lang.lockpick.success()
 			
 			-- ties to the hotkey lock system
 			local plate = GetVehicleNumberPlateText(vehicleHandle)
 			HKserver.lockSystemUpdate({1, plate})
 			HKserver.playSoundWithinDistanceOfEntityForEveryone({vehicleHandle, 10, "unlock", 1.0})
 		  else
-			vRP.notify("~g~Vehicle already unlocked.") -- lang.lockpick.unlocked()
+			vRP.notify(lang.lockpick.unlocked) -- lang.lockpick.unlocked()
 		  end
 		else
-			vRP.notify("~r~Too far away from vehicle.") -- lang.lockpick.toofar()
+			vRP.notify(lang.lockpick.toofar) -- lang.lockpick.toofar()
 		end
 end
 

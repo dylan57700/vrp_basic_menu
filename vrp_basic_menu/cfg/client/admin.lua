@@ -44,7 +44,7 @@ function vRPbm.tpToWaypoint()
     end
 
 	if(not IsWaypointActive())then
-		vRP.notify("~r~Map marker not found!") --lang.tptowaypoint.notfound()
+		vRP.notify(lang.tptowaypoint.notfound) --lang.tptowaypoint.notfound()
 		return
 	end
 
@@ -74,7 +74,7 @@ function vRPbm.tpToWaypoint()
 	end
 
 	SetEntityCoordsNoOffset(targetPed, x,y,z, 0, 0, 1)
-	vRP.notify("~g~Teleported to waypoint.") -- lang.tptowaypoint.success()
+	vRP.notify(lang.tptowaypoint.success) -- lang.tptowaypoint.success()
 end
 	
 function vRPbm.spawnVehicle(model) 
@@ -83,7 +83,7 @@ function vRPbm.spawnVehicle(model)
     local mhash = GetHashKey(model)
     while not HasModelLoaded(mhash) and i < 1000 do
 	  if math.fmod(i,100) == 0 then
-	    vRP.notify("~b~Loading vehicle model.") -- lang.spawnveh.load()
+	    vRP.notify(lang.spawnveh.load) -- lang.spawnveh.load()
 	  end
       RequestModel(mhash)
       Citizen.Wait(30)
@@ -100,9 +100,9 @@ function vRPbm.spawnVehicle(model)
       Citizen.InvokeNative(0xAD738C3085FE7E11, nveh, true, true) -- set as mission entity
       SetVehicleHasBeenOwnedByPlayer(nveh,true)
       SetModelAsNoLongerNeeded(mhash)
-	  vRP.notify("~g~Vehicle spawned.") -- lang.spawnveh.success()
+	  vRP.notify(lang.spawnveh.success) -- lang.spawnveh.success()
 	else
-	  vRP.notify("~r~Vehicle model invalid.") -- lang.spawnveh.invalid()
+	  vRP.notify(lang.spawnveh.invalid) -- lang.spawnveh.invalid()
 	end
 end
 
@@ -143,9 +143,9 @@ function vRPbm.deleteVehicleInFrontOrInside(offset)
     Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
     SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
     Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
-    vRP.notify("~g~Vehicle deleted.") -- lang.deleteveh.success()
+    vRP.notify(lang.deleteveh.success) -- lang.deleteveh.success()
   else
-    vRP.notify("~r~Too far away from vehicle.") -- lang.deleteveh.toofar()
+    vRP.notify(lang.deleteveh.toofar) -- lang.deleteveh.toofar()
   end
 end
 
@@ -158,9 +158,9 @@ function vRPbm.deleteNearestVehicle(radius)
     Citizen.InvokeNative(0xAD738C3085FE7E11, veh, false, true) -- set not as mission entity
     SetVehicleAsNoLongerNeeded(Citizen.PointerValueIntInitialized(veh))
     Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(veh))
-    vRP.notify("~g~Vehicle deleted.") -- lang.deleteveh.success()
+    vRP.notify(lang.deleteveh.success) -- lang.deleteveh.success()
   else
-    vRP.notify("~r~Too far away from vehicle.") -- lang.deleteveh.toofar()
+    vRP.notify(lang.deleteveh.toofar) -- lang.deleteveh.toofar()
   end
 end
 
@@ -172,19 +172,19 @@ function vRPbm.showBlips()
 	showblip = not showblip
 	if showblip then
 		showsprite = true
-		vRP.notify("~g~Blips enabled.") -- lang.blips.on()
+		vRP.notify(lang.blips.on) -- lang.blips.on()
 	else
 		showsprite = false
-		vRP.notify("~r~Blips disabled.") -- lang.blips.off()
+		vRP.notify(lang.blips.off) -- lang.blips.off()
 	end
 end
 
 function vRPbm.showSprites()
 	showsprite = not showsprite
 	if showsprite then
-		vRP.notify("~g~Sprites enabled.") -- lang.sprites.on()
+		vRP.notify(lang.sprites.on) -- lang.sprites.on()
 	else
-		vRP.notify("~r~Sprites disabled.") -- lang.sprites.off()
+		vRP.notify(lang.sprites.off) -- lang.sprites.off()
 	end
 end
 

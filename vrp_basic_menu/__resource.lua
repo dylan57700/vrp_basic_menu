@@ -37,3 +37,8 @@ server_scripts{
   "cfg/menus/admin.lua",
   "cfg/menus/static.lua"
 }
+
+files{
+  -- load client lang
+  "cfg/lang/en.lua"
+}

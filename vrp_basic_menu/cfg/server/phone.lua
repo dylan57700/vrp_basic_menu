@@ -23,7 +23,7 @@ function vRPbm.chargePhoneNumber(user_id,phone)
 		              if target_bank>0 then
 					    vRP.setBankMoney(user_id,my_bank)
 					    vRP.setBankMoney(target_id,target_bank)
-					    vRPclient.notify(player,lang.mcharge.charger({charge,directory_name}))
+					    vRPclient.notify(player,lang.mcharge.charger({directory_name,charge}))
 						vRPclient.notify(target,lang.mcharge.charged({my_directory_name,charge}))
 					    --vRPbm.logInfoToFile(lang.mcharge.file(),lang.mcharge.log({user_id,target_id,charge,my_bank,target_bank})
 					    vRP.closeMenu(player)
@@ -63,7 +63,7 @@ function vRPbm.payPhoneNumber(user_id,phone)
 		    local target = vRP.getUserSource(target_id)
 			if target ~= nil then
 			  vRP.setBankMoney(user_id,my_bank)
-              vRPclient.notify(player,lang.mpay.transfer({transfer,directory_name}))
+              vRPclient.notify(player,lang.mpay.transferred({transfer,directory_name}))
 			  local target_bank = vRP.getBankMoney(target_id) + tonumber(transfer)
 			  vRP.setBankMoney(target_id,target_bank)
 			  --vRPbm.logInfoToFile(lang.mpay.file(),lang.mpay.log({user_id,target_id,transfer,my_bank,target_bank})
@@ -72,7 +72,7 @@ function vRPbm.payPhoneNumber(user_id,phone)
 			    if my_directory_name == "unknown" then
 		          my_directory_name = identity.phone
 			    end
-                vRPclient.notify(target,lang.mpay.receive({transfer,my_directory_name}))
+                vRPclient.notify(target,lang.mpay.received({transfer,my_directory_name}))
               vRP.closeMenu(player)
 			else
 			  vRPclient.notify(player,lang.common.invalid_value())
