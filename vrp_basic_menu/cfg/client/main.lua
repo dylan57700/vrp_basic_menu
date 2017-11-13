@@ -24,8 +24,8 @@ function vRPbm.lockpickVehicle(wait,any)
 			
 			-- ties to the hotkey lock system
 			local plate = GetVehicleNumberPlateText(vehicleHandle)
-			HKserver.lockSystemUpdate({1, plate})
-			HKserver.playSoundWithinDistanceOfEntityForEveryone({vehicleHandle, 10, "unlock", 1.0})
+			HKserver.lockSystemUpdate(1, plate)
+			HKserver.playSoundWithinDistanceOfEntityForEveryone(vehicleHandle, 10, "unlock", 1.0)
 		  else
 			vRP.notify(lang.lockpick.unlocked) -- lang.lockpick.unlocked()
 		  end
