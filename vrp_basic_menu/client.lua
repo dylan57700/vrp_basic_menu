@@ -7,6 +7,7 @@ Tunnel.bindInterface("vrp_basic_menu",vRPbm)
 vRPserver = Tunnel.getInterface("vRP")
 HKserver = Tunnel.getInterface("vrp_hotkeys")
 BMserver = Tunnel.getInterface("vrp_basic_menu")
+Proxy.addInterface("vrp_basic_menu",vRPbm)
 vRP = Proxy.getInterface("vRP")
 
 local client_lang = "en" -- change to your lang
