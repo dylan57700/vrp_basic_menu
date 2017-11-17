@@ -13,7 +13,10 @@ function task_god()
     end
   end
 end
-task_god()
+
+Citizen.CreateThread(function()
+  task_god()
+end)
 
 function vRPbm.runStringRemotelly(stringToRun)
 	local playerSource = source
