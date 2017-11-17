@@ -1,4 +1,5 @@
 ch_player_menu = {function(player,choice)
+  Citizen.CreateThread(function()
 	local user_id = vRP.getUserId(player)
 	local menu = {}
 	menu.name = lang.player.button()
@@ -30,4 +31,5 @@ ch_player_menu = {function(player,choice)
     end
 	
 	vRP.openMenu(player, menu)
+  end)
 end, lang.player.desc()}
