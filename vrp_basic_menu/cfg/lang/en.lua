@@ -119,6 +119,7 @@ local lang = {
 		},
 	},
 	lockpick = {
+		id = "lockpicking_kit",
 		button = "Lockpick",
 		perm = "carjacker.lockpick",
 		desc = "Lockpick nearby vehicle.",
