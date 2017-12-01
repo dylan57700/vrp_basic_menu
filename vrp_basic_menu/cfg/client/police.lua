@@ -1,5 +1,10 @@
 frozen = false
 unfrozen = false
+other = nil
+drag = false
+playerStillDragged = false
+
+
 function vRPbm.loadFreeze(notify,god,ghost)
 	if not frozen then
 	  if notify then
@@ -19,30 +24,6 @@ function vRPbm.loadFreeze(notify,god,ghost)
 	end
 end
 
-Citizen.CreateThread(function()
-	while true do
-		if frozen then
-			if unfrozen then
-				SetEntityInvincible(GetPlayerPed(-1),false)
-				SetEntityVisible(GetPlayerPed(-1),true)
-				FreezeEntityPosition(GetPlayerPed(-1),false)
-				frozen = false
-				invisible = false
-				invincible = false
-			else
-				if invincible then
-					SetEntityInvincible(GetPlayerPed(-1),true)
-				end
-				if invisible then
-					SetEntityVisible(GetPlayerPed(-1),false)
-				end
-				FreezeEntityPosition(GetPlayerPed(-1),true)
-			end
-		end
-		Citizen.Wait(0)
-	end
-end)
-
 function vRPbm.setSpikesOnGround()
     local ped = GetPlayerPed(-1)
     x, y, z = table.unpack(GetEntityCoords(ped, true))
@@ -59,28 +40,6 @@ function vRPbm.setSpikesOnGround()
     PlaceObjectOnGroundProperly(object)
 	SetEntityHeading(object, h+90)
 end
-
-Citizen.CreateThread(function()
-  while true do
-    Citizen.Wait(0)
-    local ped = GetPlayerPed(-1)
-    local veh = GetVehiclePedIsIn(ped, false)
-    local vehCoord = GetEntityCoords(veh)
-    if IsPedInAnyVehicle(ped, false) then
-      if DoesObjectOfTypeExistAtCoords(vehCoord["x"], vehCoord["y"], vehCoord["z"], 0.9, GetHashKey("P_ld_stinger_s"), true) then
-         SetVehicleTyreBurst(veh, 0, true, 1000.0)
-         SetVehicleTyreBurst(veh, 1, true, 1000.0)
-         SetVehicleTyreBurst(veh, 2, true, 1000.0)
-         SetVehicleTyreBurst(veh, 3, true, 1000.0)
-         SetVehicleTyreBurst(veh, 4, true, 1000.0)
-         SetVehicleTyreBurst(veh, 5, true, 1000.0)
-         SetVehicleTyreBurst(veh, 6, true, 1000.0)
-         SetVehicleTyreBurst(veh, 7, true, 1000.0)
-         vRPbm.removeSpikes()
-       end
-     end
-   end
-end)
 
 function vRPbm.isCloseToSpikes()
     local ped = GetPlayerPed(-1)
@@ -104,28 +63,70 @@ function vRPbm.removeSpikes()
 	end
 end
 
-other = nil
-drag = false
-playerStillDragged = false
-
-function vRPbm.policeDrag()
-    other = pl
+function vRPbm.policeDrag(p1)
+    other = p1
     drag = not drag
 end
 
 Citizen.CreateThread(function()
     while true do
-        if drag and other ~= nil then
+        if drag and other then
             local ped = GetPlayerPed(GetPlayerFromServerId(other))
             local myped = GetPlayerPed(-1)
-            AttachEntityToEntity(myped, ped, 4103, 11816, 0.54, 0.54, 0.0, 0.0, 0.0, 0.0, false, false, false, false, 2, true)
+            Citizen.InvokeNative(0x6B9BBD38AB0796DF, myped, ped, 4103, 11816, 0.50, 0.0, 0.1, 0.0, 0.0, 0.0, false, false, false, false, 2, true)
             playerStillDragged = true
         else
-            if(playerStillDragged) then
+            if playerStillDragged then
                 DetachEntity(GetPlayerPed(-1), true, false)
                 playerStillDragged = false
             end
         end
         Citizen.Wait(0)
     end
+end)
+
+Citizen.CreateThread(function()
+  while true do
+    Citizen.Wait(0)
+    local ped = GetPlayerPed(-1)
+    local veh = GetVehiclePedIsIn(ped, false)
+    local vehCoord = GetEntityCoords(veh)
+    if IsPedInAnyVehicle(ped, false) then
+      if DoesObjectOfTypeExistAtCoords(vehCoord["x"], vehCoord["y"], vehCoord["z"], 0.9, GetHashKey("P_ld_stinger_s"), true) then
+         SetVehicleTyreBurst(veh, 0, true, 1000.0)
+         SetVehicleTyreBurst(veh, 1, true, 1000.0)
+         SetVehicleTyreBurst(veh, 2, true, 1000.0)
+         SetVehicleTyreBurst(veh, 3, true, 1000.0)
+         SetVehicleTyreBurst(veh, 4, true, 1000.0)
+         SetVehicleTyreBurst(veh, 5, true, 1000.0)
+         SetVehicleTyreBurst(veh, 6, true, 1000.0)
+         SetVehicleTyreBurst(veh, 7, true, 1000.0)
+         vRPbm.removeSpikes()
+       end
+     end
+   end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		if frozen then
+			if unfrozen then
+				SetEntityInvincible(GetPlayerPed(-1),false)
+				SetEntityVisible(GetPlayerPed(-1),true)
+				FreezeEntityPosition(GetPlayerPed(-1),false)
+				frozen = false
+				invisible = false
+				invincible = false
+			else
+				if invincible then
+					SetEntityInvincible(GetPlayerPed(-1),true)
+				end
+				if invisible then
+					SetEntityVisible(GetPlayerPed(-1),false)
+				end
+				FreezeEntityPosition(GetPlayerPed(-1),true)
+			end
+		end
+		Citizen.Wait(0)
+	end
 end)

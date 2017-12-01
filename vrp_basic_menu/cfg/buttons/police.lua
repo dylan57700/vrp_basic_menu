@@ -18,25 +18,17 @@ end, lang.spikes.desc()}
 -- drag player
 ch_drag = {function(player,choice)
   -- get nearest player
-    local user_id = vRP.getUserId(player)
-    if user_id ~= nil then
-      local nplayer = vRPclient.getNearestPlayer(player,10)
-      if nplayer ~= nil then
-        local nuser_id = vRP.getUserId(nplayer)
-        if nuser_id ~= nil then
-		  local handcuffed = vRPclient.isHandcuffed(nplayer)
-			if handcuffed then
-				BMclient.policeDrag(nplayer, player)
-			else
-				vRPclient.notify(player,lang.police.not_handcuffed())
-			end
-        else
-          vRPclient.notify(player,lang.common.no_player_near())
-        end
-      else
-        vRPclient.notify(player,lang.common.no_player_near())
-      end
+  local nplayer = vRPclient.getNearestPlayer(player,5)
+  if nplayer then
+    local handcuffed = vRPclient.isHandcuffed(nplayer)
+    if handcuffed then
+    	BMclient.policeDrag(nplayer, player)
+    else
+    	vRPclient.notify(player,lang.police.not_handcuffed())
     end
+  else
+    vRPclient.notify(player,lang.common.no_player_near())
+  end
 end, lang.drag.desc()}
 
 -- dynamic jail
@@ -75,7 +67,7 @@ ch_jail = {function(player,choice)
 					local user_id = vRP.getUserId(player)
 					vRPbm.logInfoToFile(lang.jail.file(),lang.jail.log({user_id,target_id,jail_time}))
 			      else
-				    vRPclient.notify(player,lang.police.not_handcuffed)
+				    vRPclient.notify(player,lang.police.not_handcuffed())
 			      end
 			  else
 				vRPclient.notify(player,lang.common.invalid_value())

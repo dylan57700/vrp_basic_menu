@@ -6,7 +6,7 @@ ch_player_menu = {function(player,choice)
 	menu.css = {top = "75px", header_color = "rgba(0,0,255,0.75)"}
     menu.onclose = function(player) vRP.openMainMenu(player) end -- nest menu
 	
-    if vRP.hasPermission(user_id,lang.store.money.perm()) then
+    if vRP.hasPermission(user_id,lang.money.store.perm()) then
       menu[lang.money.store.button()] = choice_store_money -- transforms money in wallet to money in inventory to be stored in houses and cars
     end
 	
@@ -18,11 +18,11 @@ ch_player_menu = {function(player,choice)
       menu[lang.userlist.button()] = ch_userlist -- a user list for players with vRP ids, player name and identity names only.
     end
 	
-    if vRP.hasPermission(user_id,lang.store.weapons.perm()) then
+    if vRP.hasPermission(user_id,lang.weapons.store.perm()) then
       menu[lang.weapons.store.button()] = choice_store_weapons -- store player weapons, like police store weapons from vrp
     end
 	
-    if vRP.hasPermission(user_id,lang.store.bodyarmor.perm()) then
+    if vRP.hasPermission(user_id,lang.bodyarmor.store.perm()) then
       menu[lang.bodyarmor.store.button()] = choice_store_armor -- store player armor
     end
 	
